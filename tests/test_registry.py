@@ -5,7 +5,7 @@ from gevent import sleep
 
 from doge.registry.retcd import Registry
 
-config = {"host": "127.0.0.1", "port": 6001, "ttl": 10}
+config = {"host": "127.0.0.1", "port": 2379, "ttl": 10}
 
 
 @pytest.fixture(scope='function')

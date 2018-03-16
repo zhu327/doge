@@ -16,7 +16,7 @@ config = {
     "registry": {
         "registry_class": "doge.registry.retcd.Registry",
         "host": "127.0.0.1",
-        "port": 6001,
+        "port": 2379,
         "ttl": 10
     }
 }
