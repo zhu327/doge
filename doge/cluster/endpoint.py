@@ -9,6 +9,8 @@ from mprpc import RPCPoolClient
 from mprpc.exceptions import RPCError, RPCProtocolError
 from gsocketpool.exceptions import PoolExhaustedError
 
+from doge.common.exceptions import RemoteError
+
 defaultPoolSize = 3
 defaultRequestTimeout = 1
 defaultConnectTimeout = 1
@@ -39,12 +41,12 @@ class EndPoint(object):
                 res = client.call(*args)
         except PoolExhaustedError:
             self.record_error()
-            raise
-        except (RPCError, RPCProtocolError):
-            raise
+            raise RemoteError('connection pool full')
+        except (RPCError, RPCProtocolError) as e:
+            raise RemoteError(e.message)
         except (IOError, socket.timeout):
             self.record_error()
-            raise
+            raise RemoteError('socket error or bad method')
         self.reset_error()
         return res
 

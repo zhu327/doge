@@ -7,3 +7,7 @@ class DogeError(Exception):
 
 class ServerLoadError(DogeError):
     pass
+
+
+class RemoteError(DogeError):
+    pass
