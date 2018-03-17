@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import logging
+
 import gevent
 
 from pyformance import MetricsRegistry
@@ -17,6 +19,8 @@ counterScaleThreshold = 20 * 1e9  # 如果20s都没有经历一个循环周期�
 defaultBackupRequestDelayRatio = 90  # 默认的请求延迟的水位线，P90
 defaultBackupRequestMaxRetryRatio = 15  # 最大重试比例
 defaultRequestTimeout = 1000
+
+logger = logging.getLogger('doge.cluster.ha')
 
 
 class FailOverHA(object):
@@ -76,6 +80,9 @@ class BackupRequestHA(object):
             backupRequestDelayRatio / 100.0))
         if delay < 10:
             delay = 10
+
+        logger.debug('service: %s method: %s ha delay: %s' %
+                     (request.service, request.method, str(delay)))
 
         with gevent.Timeout(requestTimeout / 1000.0, False):
             i = 0
