@@ -6,7 +6,7 @@ import signal
 from gevent.server import StreamServer
 from mprpc import RPCServer
 
-from doge.common.module_loading import import_string
+from doge.common.utils import import_string
 from doge.common.exceptions import ServerLoadError
 
 logger = logging.getLogger('doge.rpc.server')

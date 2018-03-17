@@ -24,13 +24,13 @@ class TestRandomLB(object):
     lb_class = RandomLB
 
     def test_select(self, eps):
-        lb = self.lb_class(eps)
-        ep = lb.select()
+        lb = self.lb_class(None, eps)
+        ep = lb.select(None)
         assert ep.available
 
     def test_list(self, eps):
-        lb = self.lb_class(eps)
-        eps = lb.select_list()
+        lb = self.lb_class(None, eps)
+        eps = lb.select_list(None)
         assert eps
         assert len(eps) <= MaxSelectArraySize
         for ep in eps:

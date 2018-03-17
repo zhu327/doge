@@ -9,15 +9,16 @@ defaultWeight = 1
 class RandomLB(object):
     u"""随机 Load Balance"""
 
-    def __init__(self, endpoints, weight=None):
+    def __init__(self, url, endpoints, weight=None):
+        self.url = url
         self.endpoints = endpoints
         self.weight = None
 
-    def select(self):
+    def select(self, request):
         _, ep = select_one_random(self.endpoints)
         return ep
 
-    def select_list(self):
+    def select_list(self, request):
         index, ep = select_one_random(self.endpoints)
         if not ep:
             return ep
@@ -27,16 +28,17 @@ class RandomLB(object):
 class RoundrobinLB(object):
     u"""Roundrobin Load Balance"""
 
-    def __init__(self, endpoints, weight=None):
+    def __init__(self, url, endpoints, weight=None):
+        self.url = url
         self.endpoints = endpoints
         self.weight = None
         self.index = 0
 
-    def select(self):
+    def select(self, request):
         _, ep = self.roundrobin_select()
         return ep
 
-    def select_list(self):
+    def select_list(self, request):
         index, ep = self.roundrobin_select()
         if not ep:
             return ep

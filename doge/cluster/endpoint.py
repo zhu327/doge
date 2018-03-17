@@ -9,6 +9,7 @@ from mprpc import RPCPoolClient
 from mprpc.exceptions import RPCError, RPCProtocolError
 from gsocketpool.exceptions import PoolExhaustedError
 
+from doge.common.doge import Response
 from doge.common.exceptions import RemoteError
 
 defaultPoolSize = 3
@@ -19,8 +20,8 @@ defaultErrorCountThreshold = 10
 
 
 class EndPoint(object):
-    def __init__(self, address):
-        self.address = address.split(':')
+    def __init__(self, url):
+        self.url = url
         self.available = True
         self.error_count = 0
         self.keepalive_count = 0
@@ -28,27 +29,28 @@ class EndPoint(object):
 
     def pool_factory(self):
         return gsocketpool.pool.Pool(RPCPoolClient,
-                                     dict(host=self.address[0],
-                                          port=int(self.address[1]),
+                                     dict(host=self.url.host,
+                                          port=self.url.port,
                                           timeout=defaultConnectTimeout,
                                           lifetime=defaultKeepaliveInterval,
                                           keep_alive=True),
                                      max_connections=defaultPoolSize)
 
-    def call(self, *args):
+    def call(self, request):
         try:
             with self.pool.connection() as client:
-                res = client.call(*args)
+                res = client.call(request.method, *request.args)
         except PoolExhaustedError:
             self.record_error()
-            raise RemoteError('connection pool full')
+            return Response(exception=RemoteError('connection pool full'))
         except (RPCError, RPCProtocolError) as e:
-            raise RemoteError(e.message)
+            return Response(exception=RemoteError(e.message))
         except (IOError, socket.timeout):
             self.record_error()
-            raise RemoteError('socket error or bad method')
+            return Response(
+                exception=RemoteError('socket error or bad method'))
         self.reset_error()
-        return res
+        return Response(value=res)
 
     def record_error(self):
         self.error_count += 1
@@ -63,8 +65,7 @@ class EndPoint(object):
         while time.time() - start < defaultKeepaliveInterval:
             try:
                 sock = socket.create_connection(
-                    (self.address[0], int(self.address[1])),
-                    defaultConnectTimeout)
+                    (self.url.host, self.url.port), defaultConnectTimeout)
             except:
                 pass
             else:
