@@ -3,7 +3,7 @@
 from doge.common.url import URL
 
 def test_url():
-    url = URL("", "", "", "")
+    url = URL("", "", "")
     assert url.get_int_value('a', 1) == 1
     url.set_param('a', -1)
     assert url.get_positive_int_value('a', 3) == 3

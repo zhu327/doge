@@ -1,52 +1,77 @@
 # coding: utf-8
 
+import logging
 
-class BaseRegistry(object):
-    u"""注册中心
+import gevent
+import etcd
 
-    与注册中心交互的实体
+logger = logging.getLogger('doge.registry.etcd')
 
-    *conf* 注册中心配置
-        *host* 注册中心 host
-        *port* 注册中心 port
-    """
 
-    def __init__(self, conf):
-        self.conf = conf
+class Registry(object):
+    """Register etcd"""
 
-    def register(self, name, node, host, port):
-        u"""注册服务
+    def __init__(self, url):
+        self.url = url
+        self.etcd = etcd.Client(host=url.host, port=url.port)
 
-        *name* 服务名称
-        *node* 节点名称
-        *host* 服务 host
-        *port* 服务 port
-        """
-        raise NotImplementedError(
-            'subclasses of Register may require a register() method')
+    def register(self, service, url):
+        n_key = self._node_key(service, url.get_param('node'))
+        value = '{}:{}'.format(url.host, url.port)
+        ttl = self.url.get_param('ttl')
 
-    def discovery(self, name):
-        u"""发现服务
+        logger.info("register key: %s value: %s" % (n_key, value))
 
-        *name* 服务名称
-        """
-        raise NotImplementedError(
-            'subclasses of Register may require a discovery() method')
+        self.heartbeat(n_key, value, ttl=ttl)
 
-    def watch(self, name, callback):
-        u"""监听服务
+    def deregister(self, service, url):
+        n_key = self._node_key(service, url.get_param('node'))
 
-        *name* 服务名称
-        *callback* 通知的callback
-        """
-        raise NotImplementedError(
-            'subclasses of Register may require a watch() method')
+        logger.debug("deregister key: %s" % n_key)
 
-    def deregister(self, name, node):
-        u"""去注册
+        self.etcd.delete(n_key)
 
-        *name* 服务名称
-        *node* 节点名称
-        """
-        raise NotImplementedError(
-            'subclasses of Register may require a register() method')
+    def discovery(self, service):
+        s_key = self._svc_key(service)
+        res = self.etcd.read(s_key, recursive=True)
+
+        logger.info("discovery key: %s length: %s" %
+                    (s_key, len(res._children)))
+
+        return {child.key: child.value for child in res.children}
+
+    def watch(self, service, callback):
+        def watch_loop():
+            s_key = self._svc_key(service)
+            while 1:
+                try:
+                    res = self.etcd.watch(s_key, recursive=True)
+                    callback({
+                        'action': self._proc_action(res.action),
+                        'key': res.key,
+                        'value': res.value
+                    })
+                except etcd.EtcdWatchTimedOut:
+                    pass
+
+        self.watch_thread = gevent.spawn(watch_loop)
+
+    def _proc_action(self, action):
+        return 'delete' if action == 'expire' else action
+
+    def _svc_key(self, service):
+        return '/doge/rpc/{}'.format(service)
+
+    def _node_key(self, service, node):
+        return '/doge/rpc/{}/{}'.format(service, node)
+
+    def heartbeat(self, key, value, ttl):
+        self.etcd.write(key, value, ttl=ttl)
+
+        def heartbeat_loop():
+            sleep = int(ttl / 2)
+            while 1:
+                gevent.sleep(sleep)
+                self.etcd.refresh(key, ttl)
+
+        self.beat_thread = gevent.spawn(heartbeat_loop)

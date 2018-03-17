@@ -11,3 +11,7 @@ class ServerLoadError(DogeError):
 
 class RemoteError(DogeError):
     pass
+
+
+class ClientError(DogeError):
+    pass

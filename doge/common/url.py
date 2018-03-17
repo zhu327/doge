@@ -2,8 +2,7 @@
 
 
 class URL(object):
-    def __init__(self, proto, host, port, path, params={}):
-        self.proto = proto
+    def __init__(self, host, port, path="", params={}):
         self.host = host
         self.port = port
         self.path = path
@@ -22,7 +21,7 @@ class URL(object):
         value = self.get_int_value(key, default)
         return default if value < 1 else value
 
-    def get_param(self, key, default):
+    def get_param(self, key, default=None):
         if key in self.params and self.params[key]:
             return self.params[key]
         return default

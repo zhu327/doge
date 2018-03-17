@@ -27,7 +27,7 @@ def server():
 
 @pytest.fixture(scope='module')
 def url():
-    return URL("", "127.0.0.1", 4399, "")
+    return URL("127.0.0.1", 4399, "")
 
 
 class TestEndpoint(object):

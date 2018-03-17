@@ -20,7 +20,7 @@ class SumServer(RPCServer):
 
 @pytest.fixture(scope='module')
 def lb():
-    url = URL("", '127.0.0.1', 4399, "")
+    url = URL('127.0.0.1', 4399, "")
     ep = EndPoint(url)
     return RandomLB(url, [ep])
 

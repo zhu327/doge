@@ -7,26 +7,19 @@ from gevent import sleep
 from mprpc import RPCClient
 
 from doge.rpc.server import Server
+from doge.rpc.context import Context
+from doge.common.url import URL
 
-config = {
-    "name": "test",
-    "node": "n1",
-    "host": "127.0.0.1",
-    "port": 4399,
-    "registry": {
-        "registry_class": "doge.registry.retcd.Registry",
-        "host": "127.0.0.1",
-        "port": 2379,
-        "ttl": 10
-    }
-}
+url = URL("127.0.0.1", 4399, params={"name": "test", "node": "n1"})
+rurl = URL("127.0.0.1", 2379, params={"ttl": 10})
+context = Context(url, rurl)
 
 
 @pytest.fixture(scope='function')
 def server():
-    s = Server(config)
+    s = Server(context)
     yield s
-    s.registry.deregister(config['name'], config['node'])
+    s.registry.deregister(s.name, url)
     s.registry.beat_thread.kill()
 
 
@@ -44,11 +37,11 @@ class TestServer(object):
         sleep(0.1)
 
         registry = server.registry
-        res = registry.discovery(config['name'])
-        key = registry._node_key(config['name'], config['node'])
+        res = registry.discovery(server.name)
+        key = registry._node_key(server.name, url.get_param("node"))
 
         host, port = res[key].split(':')
 
-        client = RPCClient(config['host'], config['port'])
+        client = RPCClient(str(host), int(port))
 
         assert client.call('sum', 1, 2) == 3

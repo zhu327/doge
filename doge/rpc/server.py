@@ -13,19 +13,12 @@ logger = logging.getLogger('doge.rpc.server')
 
 
 class Server(object):
-    def __init__(self, conf):
-        self.conf = conf
-        self.registry = None
+    def __init__(self, context):
+        self.name = context.url.get_param('name')
+        self.url = context.url
+        self.context = context
+        self.registry = context.get_registry()
         self.handler = None
-
-        self.init()
-
-    def init(self):
-        u"""初始化registry"""
-        conf = self.conf['registry']
-
-        cls = import_string(conf['registry_class'])
-        self.registry = cls(conf)
 
     def load(self, cls):
         u"""加载RPC methods类"""
@@ -39,17 +32,13 @@ class Server(object):
 
     def register(self):
         u"""向registry服务"""
-        conf = self.conf
-
-        self.registry.register(conf['name'], conf['node'], conf['host'],
-                               conf['port'])
+        self.registry.register(self.name, self.url)
 
     def handle_signal(self):
         u"""注册信号"""
-        conf = self.conf
 
         def handler(signum, frame):
-            self.registry.deregister(conf['name'], conf['node'])
+            self.registry.deregister(self.name, self.url)
 
         signal.signal(signal.SIGINT, handler)
         signal.signal(signal.SIGTERM, handler)
@@ -59,13 +48,12 @@ class Server(object):
         if not self.handler:
             raise ServerLoadError('Methods not exits.')
 
-        conf = self.conf
-
-        logger.info("Starting server at %s:%s" % (conf['host'], conf['port']))
+        logger.info("Starting server at %s:%s" %
+                    (self.url.host, str(self.url.port)))
 
         self.handle_signal()
 
-        server = StreamServer((conf['host'], conf['port']), self.handler)
+        server = StreamServer((self.url.host, self.url.port), self.handler)
 
         self.register()
 
