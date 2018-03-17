@@ -38,6 +38,7 @@ setup(name='doge',
       ],
       install_requires=[
           'mprpc',
+          'pyformance',
           'python-etcd',
       ],
       tests_require=[

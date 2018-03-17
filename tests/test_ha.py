@@ -6,7 +6,7 @@ import gevent
 from gevent.server import StreamServer
 from mprpc import RPCServer
 
-from doge.cluster.ha import FailOverHA
+from doge.cluster.ha import FailOverHA, BackupRequestHA
 from doge.cluster.lb import RandomLB
 from doge.cluster.endpoint import EndPoint
 from doge.common.url import URL
@@ -34,8 +34,17 @@ def server():
     g.kill()
 
 
-class TestFailOver(object):
+class TestFailOverHA(object):
     def test_fail_over(self, server, lb):
         ha = FailOverHA(lb.url)
         r = Request("", 'sum', 1, 2)
+        assert ha.call(r, lb).value == 3
+
+
+class TestBackupRequestHA(object):
+    def test_br(self, server, lb):
+        ha = BackupRequestHA(lb.url)
+        r = Request("", 'sum', 1, 2)
+        assert ha.call(r, lb).value == 3
+        lb.url.set_param('sum.retries', 5)
         assert ha.call(r, lb).value == 3

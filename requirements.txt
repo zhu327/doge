@@ -1,2 +1,3 @@
 mprpc==0.1.16
+pyformance==0.4
 python-etcd==0.4.5

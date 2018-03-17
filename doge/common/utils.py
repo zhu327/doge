@@ -1,3 +1,7 @@
+# coding: utf-8
+
+import time
+
 from importlib import import_module
 
 
@@ -20,3 +24,8 @@ def import_string(dotted_path):
         msg = 'Module "%s" does not define a "%s" attribute/class' % (
             dotted_path, class_name)
         raise ImportError(msg)
+
+
+def time_ns():
+    s, n = ("%.20f" % time.time()).split('.')
+    return long(s) * 1e9 + long(n[:9])
