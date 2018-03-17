@@ -45,8 +45,6 @@ class BackupRequestHA(object):
         self.url = url
         self.name = "backupRequestHA"
 
-        self.samples = {}
-
         self.curRoundTotalCount = 0
         self.curRoundRetryCount = 0
 
@@ -88,12 +86,21 @@ class BackupRequestHA(object):
                 if i > 0 and not self.try_acquirePermit(
                         backupRequestMaxRetryRatio):
                     break
-                with gevent.Timeout(delay / 1000.0, False):
+
+                def func():
                     start = time_ns()
                     res = self.do_call(request, ep)
                     if not res.exception:
                         histogram.add(float(time_ns() - start) / 1e6)
                         return res
+
+                g = gevent.spawn(func)
+                try:
+                    res = g.get(timeout=(delay / 1000.0))
+                    if res: return res
+                except gevent.timeout.Timeout:
+                    pass
+
                 i += 1
 
         return Response(exception=RemoteError('request timeout'))
