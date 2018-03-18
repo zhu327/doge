@@ -1,8 +1,12 @@
 # coding: utf-8
 
+import logging
+
 from doge.common.doge import Request
 from doge.common.exceptions import ClientError
 from doge.rpc.context import new_endpoint
+
+logger = logging.getLogger('doge.rpc.client')
 
 
 class Client(object):
@@ -24,6 +28,7 @@ class Client(object):
             r = Request(self.service, method, *args)
             res = self.ha.call(r, self.lb)
             if res.exception:
+                logging.exception(res.exception)
                 raise res.exception
             return res.value
         raise ClientError("client not available")
@@ -44,7 +49,7 @@ class Client(object):
     def destroy(self):
         if not self.closed:
             self.closed = True
-            self.regisry.watch_thread.kill()
+            self.regisry.destroy()
             for k, v in self.endpoints.iteritems():
                 v.destroy()
             del self.context

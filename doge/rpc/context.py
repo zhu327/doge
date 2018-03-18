@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from doge.registry.registry import Registry
+from doge.registry.registry import EtcdRegistry, DirectRegistry
 from doge.cluster.ha import FailOverHA, BackupRequestHA
 from doge.cluster.lb import RandomLB, RoundrobinLB
 from doge.cluster.endpoint import EndPoint
@@ -13,8 +13,11 @@ class Context(object):
         self.rurl = rurl
 
     def get_registry(self):
-        if self.rurl.get_param('protocol', 'etcd') == 'etcd':
-            return Registry(self.rurl)
+        protocol = self.rurl.get_param('protocol', 'etcd')
+        if protocol == 'etcd':
+            return EtcdRegistry(self.rurl)
+        elif protocol == 'direct':
+            return DirectRegistry(self.rurl)
 
     def get_endpoints(self, registry, service):
         eps = {}

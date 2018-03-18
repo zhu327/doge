@@ -28,7 +28,7 @@ def server():
     sleep(0.1)
     yield s
     g.kill()
-    s.registry.beat_thread.kill()
+    s.registry.destroy()
 
 
 class TestClient(object):
@@ -46,3 +46,20 @@ class TestClient(object):
         sleep(0.2)
         with pytest.raises(RemoteError):
             c.call("sum", 1, 2)
+
+    def test_context(self, server):
+        url = URL("127.0.0.1",
+                  4399,
+                  params={
+                      "name": "test",
+                      "node": "n1",
+                      "haStrategy": "backupRequestHA",
+                      "loadbalance": "RandomLB"
+                  })
+        rurl = URL("127.0.0.1", 4399, params={"protocol": "direct"})
+        context = Context(url, rurl)
+        c = Client(context, "test")
+        self.c = c
+        assert c.call("sum", 1, 2) == 3
+        assert c.call("sum", 1, 2) == 3
+        assert c.call("sum", 1, 2) == 3

@@ -20,7 +20,7 @@ def server():
     s = Server(context)
     yield s
     s.registry.deregister(s.name, url)
-    s.registry.beat_thread.kill()
+    s.registry.destroy()
 
 
 class TestServer(object):

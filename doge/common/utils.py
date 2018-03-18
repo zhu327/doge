@@ -29,3 +29,8 @@ def import_string(dotted_path):
 def time_ns():
     s, n = ("%.20f" % time.time()).split('.')
     return long(s) * 1e9 + long(n[:9])
+
+
+def str_to_host(s):
+    h, p = s.split(":")
+    return (str(h), int(p))

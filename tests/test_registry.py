@@ -3,7 +3,7 @@
 import pytest
 from gevent import sleep
 
-from doge.registry.registry import Registry
+from doge.registry.registry import EtcdRegistry, DirectRegistry
 from doge.common.url import URL
 
 url = URL("127.0.0.1", 2379, params={"ttl": 10})
@@ -11,18 +11,14 @@ url = URL("127.0.0.1", 2379, params={"ttl": 10})
 
 @pytest.fixture(scope='function')
 def registry():
-    r = Registry(url)
-    yield r
-    if hasattr(r, 'beat_thread'):
-        r.beat_thread.kill()
-    if hasattr(r, 'watch_thread'):
-        r.watch_thread.kill()
+    return EtcdRegistry(url)
 
 
-class TestRegistry(object):
+class TestEtcdRegistry(object):
     def teardown_method(self, method):
         if hasattr(self, 'registry'):
             self.registry.deregister(*self.args)
+            self.registry.destroy()
             del self.registry
             del self.args
 
@@ -69,10 +65,12 @@ class TestRegistry(object):
         assert len(res) == 2
 
     def test_watch(self, registry):
-        service = 'test'
+        service = 'test_watch'
         url = URL('locahost', 80, params={"node": 'n1'})
 
         registry.register(service, url)
+
+        sleep(0.1)
 
         def callback(res):
             print 'callback now'
@@ -85,3 +83,25 @@ class TestRegistry(object):
         registry.deregister(service, url)
         registry.beat_thread.kill()
         sleep(0.1)
+
+    def test_zaddress(self):
+        service = 'test'
+        url = URL('locahost', 80, params={"node": 'n1'})
+
+        rurl = URL(None, None, params={"ttl": 10, "address": "127.0.0.1:2379"})
+
+        registry = EtcdRegistry(rurl)
+        self.registry = registry
+        self.args = [service, url]
+
+        registry.register(service, url)
+        res = registry.discovery(service)
+        key = registry._node_key(service, url.get_param("node"))
+        assert key in res
+        assert res[key] == ':'.join((url.host, str(url.port)))
+
+
+class TestDirectRegistry(object):
+    def test_direct(self):
+        registry = DirectRegistry(url)
+        assert registry.discovery('')[0] == '127.0.0.1:2379'

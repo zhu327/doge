@@ -5,15 +5,25 @@ import logging
 import gevent
 import etcd
 
+from doge.common.utils import str_to_host
+
 logger = logging.getLogger('doge.registry.etcd')
 
 
-class Registry(object):
+class EtcdRegistry(object):
     """Register etcd"""
 
     def __init__(self, url):
         self.url = url
-        self.etcd = etcd.Client(host=url.host, port=url.port)
+        self.etcd = self.registry_factory(url)
+
+    def registry_factory(self, url):
+        address = url.get_param("address")
+        if address:
+            return etcd.Client(
+                allow_reconnect=True,
+                host=tuple([str_to_host(add) for add in address.split(",")]))
+        return etcd.Client(host=url.host, port=url.port)
 
     def register(self, service, url):
         n_key = self._node_key(service, url.get_param('node'))
@@ -75,3 +85,34 @@ class Registry(object):
                 self.etcd.refresh(key, ttl)
 
         self.beat_thread = gevent.spawn(heartbeat_loop)
+
+    def destroy(self):
+        if hasattr(self, "beat_thread"):
+            self.beat_thread.kill()
+        if hasattr(self, "watch_thread"):
+            self.watch_thread.kill()
+
+
+class DirectRegistry(object):
+    """Fake Registry"""
+
+    def __init__(self, url):
+        self.url = url
+
+    def register(self, service, url):
+        pass
+
+    def deregister(self, service, url):
+        pass
+
+    def discovery(self, service):
+        address = self.url.get_param("address")
+        if address:
+            return {i: add for i, add in enumerate(address.split(","))}
+        return {0: "%s:%s" % (self.url.host, str(self.url.port))}
+
+    def watch(self, service, callback):
+        pass
+
+    def destroy(self):
+        pass
