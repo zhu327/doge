@@ -7,7 +7,7 @@ from gevent import sleep
 from doge.rpc.server import Server
 from doge.rpc.context import Context
 from doge.common.url import URL
-from doge.cluster.client import Client
+from doge.rpc.client import Client
 from doge.common.exceptions import RemoteError
 
 url = URL("127.0.0.1", 4399, params={"name": "test", "node": "n1"})
