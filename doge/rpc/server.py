@@ -6,6 +6,8 @@ import signal
 from gevent.server import StreamServer
 from mprpc import RPCServer
 
+from doge.config.config import Config
+from doge.rpc.context import Context
 from doge.common.utils import import_string
 from doge.common.exceptions import ServerLoadError
 
@@ -58,3 +60,10 @@ class Server(object):
         self.register()
 
         server.serve_forever()
+
+
+def new_server(config_file):
+    u"""从配置文件生成server"""
+    config = Config(config_file)
+    context = Context(config.parse_service(), config.parse_registry())
+    return Server(context)

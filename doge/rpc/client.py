@@ -4,7 +4,8 @@ import logging
 
 from doge.common.doge import Request
 from doge.common.exceptions import ClientError
-from doge.rpc.context import new_endpoint
+from doge.rpc.context import new_endpoint, Context
+from doge.config.config import Config
 
 logger = logging.getLogger('doge.rpc.client')
 
@@ -58,3 +59,19 @@ class Client(object):
             del self.endpoints
             del self.lb
             self.closed = True
+
+
+class Cluster(object):
+    def __init__(self, config_file):
+        u"""Cluster 抽象"""
+        self.config_file = config_file
+        self.config = Config(config_file)
+        self.context = Context(self.config.parse_refer(),
+                               self.config.parse_registry())
+
+        self.clients = {}
+
+    def get_client(self, service):
+        if not service in self.clients:
+            self.clients[service] = Client(self.context, service)
+        return self.clients[service]

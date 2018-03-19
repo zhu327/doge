@@ -30,7 +30,7 @@ setup(
     license=open('LICENSE').read(),
     keywords=['rpc', 'etcd', 'messagepack', 'gevent', 'microservices'],
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Natural Language :: Chinese',
         'License :: OSI Approved :: Apache Software License',

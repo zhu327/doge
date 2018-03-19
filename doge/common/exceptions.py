@@ -15,3 +15,15 @@ class RemoteError(DogeError):
 
 class ClientError(DogeError):
     pass
+
+
+class RegistryCfgError(DogeError):
+    pass
+
+
+class ServiceCfgError(DogeError):
+    pass
+
+
+class ReferCfgError(DogeError):
+    pass

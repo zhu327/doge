@@ -28,7 +28,7 @@ class EtcdRegistry(object):
     def register(self, service, url):
         n_key = self._node_key(service, url.get_param('node'))
         value = '{}:{}'.format(url.host, url.port)
-        ttl = self.url.get_param('ttl')
+        ttl = self.url.get_param('ttl', 10)
 
         logger.info("register key: %s value: %s" % (n_key, value))
 
