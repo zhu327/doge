@@ -19,7 +19,7 @@ class PyTest(TestCommand):
 
 
 setup(
-    name='doge',
+    name='dogerpc',
     version='0.1.1',
     description='A RPC Framework',
     long_description=open('README.md').read(),
@@ -35,7 +35,11 @@ setup(
         'Natural Language :: Chinese',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     install_requires=[
         'mprpc',
