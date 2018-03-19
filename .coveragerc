@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = doge
+source = doge/
 
 [report]
 exclude_lines =
