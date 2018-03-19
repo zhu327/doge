@@ -2,6 +2,7 @@
 
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/zhu327/doge/blob/master/LICENSE)
+[![PyPI version](https://badge.fury.io/py/dogerpc.svg)](https://pypi.python.org/pypi/dogerpc/0.1.1)
 [![Build Status](https://travis-ci.org/zhu327/doge.svg?branch=master)](https://travis-ci.org/zhu327/doge)
 [![codecov](https://codecov.io/gh/zhu327/doge/branch/master/graph/badge.svg)](https://codecov.io/gh/zhu327/doge)
 
