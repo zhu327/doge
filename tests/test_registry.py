@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from __future__ import print_function
 import pytest
 from gevent import sleep
 
@@ -73,7 +74,7 @@ class TestEtcdRegistry(object):
         sleep(0.1)
 
         def callback(res):
-            print 'callback now'
+            print('callback now')
             assert res['action'] == 'delete'
 
         registry.watch(service, callback)

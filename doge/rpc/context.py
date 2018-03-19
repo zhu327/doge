@@ -21,7 +21,7 @@ class Context(object):
 
     def get_endpoints(self, registry, service):
         eps = {}
-        for k, v in registry.discovery(service).iteritems():
+        for k, v in registry.discovery(service).items():
             eps[k] = new_endpoint(k, v)
         return eps
 

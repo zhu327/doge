@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import json
+from io import open
 
 from doge.common.url import URL
 from doge.common.exceptions import (RegistryCfgError, ServiceCfgError,
@@ -13,8 +14,8 @@ class Config(object):
         self.cfg = self.config_from_file(name)
 
     def config_from_file(self, name):
-        with open(name, 'r') as f:
-            content = f.read().decode('utf8')
+        with open(name, 'r', encoding='utf8') as f:
+            content = f.read()
         return json.loads(content)
 
     def parse_registry(self):

@@ -18,7 +18,7 @@ class Client(object):
         self.regisry = context.get_registry()
         self.endpoints = context.get_endpoints(self.regisry, service)
         self.ha = context.get_ha()
-        self.lb = context.get_lb(self.endpoints.values())
+        self.lb = context.get_lb(list(self.endpoints.values()))
         self.available = True
         self.closed = False
 
@@ -51,7 +51,7 @@ class Client(object):
         if not self.closed:
             self.closed = True
             self.regisry.destroy()
-            for k, v in self.endpoints.iteritems():
+            for k, v in self.endpoints.items():
                 v.destroy()
             del self.context
             del self.regisry
