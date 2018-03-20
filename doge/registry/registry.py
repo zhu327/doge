@@ -53,16 +53,12 @@ class EtcdRegistry(object):
     def watch(self, service, callback):
         def watch_loop():
             s_key = self._svc_key(service)
-            while 1:
-                try:
-                    res = self.etcd.watch(s_key, recursive=True)
-                    callback({
-                        'action': self._proc_action(res.action),
-                        'key': res.key,
-                        'value': res.value
-                    })
-                except etcd.EtcdWatchTimedOut:
-                    pass
+            for res in self.etcd.eternal_watch(s_key, recursive=True):
+                callback({
+                    'action': self._proc_action(res.action),
+                    'key': res.key,
+                    'value': res.value
+                })
 
         self.watch_thread = gevent.spawn(watch_loop)
 
