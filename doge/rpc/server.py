@@ -21,6 +21,7 @@ class Server(object):
         self.context = context
         self.registry = context.get_registry()
         self.handler = None
+        self.limit = context.url.get_param('limitConn', 'default')
 
     def load(self, cls):
         u"""加载RPC methods类"""
@@ -55,7 +56,10 @@ class Server(object):
 
         self.handle_signal()
 
-        server = StreamServer((self.url.host, self.url.port), self.handler)
+        server = StreamServer(
+            (self.url.host, self.url.port),
+            self.handler,
+            spawn=self.limit)
 
         self.register()
 

@@ -15,6 +15,7 @@ Doge is a Python RPC framework like [Alibaba Dubbo](http://dubbo.io/) and [Weibo
 - 服务治理, 服务注册, 服务发现
 - 高可用策略, failover, backupRequestHA
 - 负载均衡策略, RandomLB, RoundrobinLB
+- 限流策略, gevent Pool
 
 ## Quick Start
 
@@ -43,7 +44,8 @@ pip install dogerpc
         "name": "test", // 服务名称
         "node": "n1",　// 节点名称
         "host": "127.0.0.1", // 服务暴露ip
-        "port": 4399 // 服务暴露port
+        "port": 4399, // 服务暴露port
+        "limitConn": 100 // 服务最大连接数, 可选, 默认不限制
     }
 }
 ```
@@ -114,6 +116,13 @@ if __name__ == '__main__':
     client = cluster.get_client("test")  # 获取服务名对应的Client对象
     print(client.call('sum', 1, 2))  # 远程调用服务Sum类下的sum方法
 ```
+
+## Requirements
+
+- [gevent](https://github.com/gevent/gevent)
+- [mprpc](https://github.com/studio-ousia/mprpc)
+- [python-etcd](https://github.com/jplana/python-etcd)
+- [pyformance](https://github.com/omergertel/pyformance)
 
 ## License
 

@@ -9,6 +9,7 @@
         "name": "test",
         "node": "n1",
         "host": "127.0.0.1",
-        "port": 4399
+        "port": 4399,
+        "limitConn": 100
     }
 }
