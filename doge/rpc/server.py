@@ -8,7 +8,6 @@ from mprpc import RPCServer
 
 from doge.config.config import Config
 from doge.rpc.context import Context
-from doge.common.utils import import_string
 from doge.common.exceptions import ServerLoadError
 
 logger = logging.getLogger('doge.rpc.server')

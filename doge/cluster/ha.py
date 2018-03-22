@@ -5,8 +5,6 @@ import logging
 import gevent
 
 from pyformance import MetricsRegistry
-from pyformance.stats import ExpDecayingSample
-from pyformance.meters import Histogram
 
 from doge.common.exceptions import RemoteError
 from doge.common.doge import Response
