@@ -44,7 +44,7 @@ class EndPoint(object):
             self.record_error()
             return Response(exception=RemoteError('connection pool full'))
         except (RPCError, RPCProtocolError) as e:
-            return Response(exception=RemoteError(e.message))
+            return Response(exception=RemoteError(str(e)))
         except (IOError, socket.timeout):
             self.record_error()
             return Response(
@@ -63,6 +63,7 @@ class EndPoint(object):
 
         start = time.time()
         while time.time() - start < defaultKeepaliveInterval:
+            sock = None
             try:
                 sock = socket.create_connection(
                     (self.url.host, self.url.port), defaultConnectTimeout)
@@ -73,7 +74,8 @@ class EndPoint(object):
                 self.reset_error()
                 return
             finally:
-                sock.close()
+                if sock:
+                    sock.close()
 
     def reset_error(self):
         self.error_count = 0

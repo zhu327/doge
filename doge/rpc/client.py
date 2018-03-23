@@ -29,8 +29,10 @@ class Client(object):
             r = Request(self.service, method, *args)
             res = self.ha.call(r, self.lb)
             if res.exception:
-                logging.exception(res.exception)
-                raise res.exception
+                exc = res.exception
+                logger.error("Client call Error",
+                             exc_info=(type(exc), exc, exc.__traceback__))
+                raise exc
             return res.value
         raise ClientError("client not available")
 
