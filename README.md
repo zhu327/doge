@@ -116,6 +116,12 @@ if __name__ == '__main__':
     print(client.call('sum', 1, 2))  # 远程调用服务Sum类下的sum方法
 ```
 
+## doge json gateway
+
+基于Bottle实现的json rpc gateway
+
+<https://gist.github.com/zhu327/24c8262dc40c5de7eeaddbfc572f4215>
+
 ## Requirements
 
 - [gevent](https://github.com/gevent/gevent)

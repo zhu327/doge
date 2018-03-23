@@ -20,7 +20,7 @@ class PyTest(TestCommand):
 
 setup(
     name='dogerpc',
-    version='0.1.2',
+    version='0.1.3',
     description='A RPC Framework',
     long_description=open('README.md').read(),
     author='Timmy',
