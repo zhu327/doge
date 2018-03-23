@@ -2,6 +2,8 @@
 
 import logging
 
+from gevent.lock import BoundedSemaphore
+
 from doge.common.doge import Request
 from doge.common.exceptions import ClientError
 from doge.rpc.context import new_endpoint, Context
@@ -70,8 +72,12 @@ class Cluster(object):
                                self.config.parse_registry())
 
         self.clients = {}
+        self.sem = BoundedSemaphore(1)
 
     def get_client(self, service):
         if not service in self.clients:
-            self.clients[service] = Client(self.context, service)
+            self.sem.acquire()
+            if not service in self.clients:
+                self.clients[service] = Client(self.context, service)
+            self.sem.release()
         return self.clients[service]
