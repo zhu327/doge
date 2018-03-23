@@ -32,9 +32,9 @@ class EndPoint(object):
                         dict(host=self.url.host,
                              port=self.url.port,
                              timeout=defaultConnectTimeout,
-                             lifetime=defaultKeepaliveInterval,
                              keep_alive=True),
-                        max_connections=defaultPoolSize)
+                        max_connections=defaultPoolSize,
+                        reap_expired_connections=False)
 
     def call(self, request):
         try:
