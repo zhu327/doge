@@ -4,6 +4,8 @@ import time
 
 from importlib import import_module
 
+from gsocketpool.pool import Pool
+
 
 def import_string(dotted_path):
     """
@@ -34,3 +36,11 @@ def time_ns():
 def str_to_host(s):
     h, p = s.split(":")
     return (str(h), int(p))
+
+
+class ConnPool(Pool):
+    def _create_connection(self):
+        conn = self._factory(**self._options)
+        # conn.open()
+
+        return conn

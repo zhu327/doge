@@ -4,13 +4,13 @@ import time
 
 import gevent
 from gevent import socket
-import gsocketpool.pool
 from mprpc import RPCPoolClient
 from mprpc.exceptions import RPCError, RPCProtocolError
 from gsocketpool.exceptions import PoolExhaustedError
 
 from doge.common.doge import Response
 from doge.common.exceptions import RemoteError
+from doge.common.utils import ConnPool
 
 defaultPoolSize = 3
 defaultRequestTimeout = 1
@@ -28,17 +28,19 @@ class EndPoint(object):
         self.pool = self.pool_factory()
 
     def pool_factory(self):
-        return gsocketpool.pool.Pool(RPCPoolClient,
-                                     dict(host=self.url.host,
-                                          port=self.url.port,
-                                          timeout=defaultConnectTimeout,
-                                          lifetime=defaultKeepaliveInterval,
-                                          keep_alive=True),
-                                     max_connections=defaultPoolSize)
+        return ConnPool(RPCPoolClient,
+                        dict(host=self.url.host,
+                             port=self.url.port,
+                             timeout=defaultConnectTimeout,
+                             lifetime=defaultKeepaliveInterval,
+                             keep_alive=True),
+                        max_connections=defaultPoolSize)
 
     def call(self, request):
         try:
             with self.pool.connection() as client:
+                if not client.is_connected():
+                    client.open()
                 res = client.call(request.method, *request.args)
         except PoolExhaustedError:
             self.record_error()
