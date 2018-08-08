@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/zhu327/doge/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/zhu327/doge.svg?branch=master)](https://travis-ci.org/zhu327/doge)
 [![codecov](https://codecov.io/gh/zhu327/doge/branch/master/graph/badge.svg)](https://codecov.io/gh/zhu327/doge)
+[![codebeat badge](https://codebeat.co/badges/1624b195-bbf5-43d0-9f9d-d330ca09ab76)](https://codebeat.co/projects/github-com-zhu327-doge-master)
 
 Doge is a Python RPC framework like [Alibaba Dubbo](http://dubbo.io/) and [Weibo Motan](https://github.com/weibocom/motan).
 
