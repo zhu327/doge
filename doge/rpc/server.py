@@ -64,6 +64,10 @@ class Server(object):
 
         server.serve_forever()
 
+    def __call__(environ, start_response):
+        # for gunicorn wsgi app
+        pass
+
 
 def new_server(config_file):
     u"""从配置文件生成server"""

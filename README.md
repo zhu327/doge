@@ -123,6 +123,39 @@ if __name__ == '__main__':
 
 <https://gist.github.com/zhu327/24c8262dc40c5de7eeaddbfc572f4215>
 
+## Gunicorn server
+
+创建`app.py`, 沿用example中的配置文件`server.json`
+
+```python
+# coding: utf-8
+
+from doge.rpc.server import new_server
+
+
+# 定义rpc方法类
+class Sum(object):
+    def sum(self, x, y):
+        return x + y
+
+
+server = new_server('server.json')  # 基于配置文件实例化server对象
+server.load(Sum)  # 加载暴露rpc方法类
+```
+
+创建`configs.py`, 填写的bind必须与`server.json`配置的监听端口一致
+```python
+from doge.gunicorn.configs import *
+
+bind = "127.0.0.1:4399"
+```
+
+启动Gunicorn
+
+```shell
+gunicorn app:server -c configs.py
+```
+
 ## Requirements
 
 - [gevent](https://github.com/gevent/gevent)
