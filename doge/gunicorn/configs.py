@@ -5,6 +5,9 @@ worker_class = "doge.gunicorn.worker.DogeWorker"
 
 
 def when_ready(server):
+    from gevent import monkey
+    monkey.patch_socket()
+
     server.app.wsgi().register()
 
 
