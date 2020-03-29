@@ -28,13 +28,17 @@ class EndPoint(object):
         self.pool = self.pool_factory()
 
     def pool_factory(self):
-        return ConnPool(RPCPoolClient,
-                        dict(host=self.url.host,
-                             port=self.url.port,
-                             timeout=defaultConnectTimeout,
-                             keep_alive=True),
-                        max_connections=defaultPoolSize,
-                        reap_expired_connections=False)
+        return ConnPool(
+            RPCPoolClient,
+            dict(
+                host=self.url.host,
+                port=self.url.port,
+                timeout=defaultConnectTimeout,
+                keep_alive=True,
+            ),
+            max_connections=defaultPoolSize,
+            reap_expired_connections=False,
+        )
 
     def call(self, request):
         try:
@@ -44,13 +48,13 @@ class EndPoint(object):
                 res = client.call(request.method, *request.args)
         except PoolExhaustedError:
             self.record_error()
-            return Response(exception=RemoteError('connection pool full'))
+            return Response(exception=RemoteError("connection pool full"))
         except (RPCError, RPCProtocolError) as e:
             return Response(exception=RemoteError(str(e)))
         except (IOError, socket.timeout):
             self.record_error()
             return Response(
-                exception=RemoteError('socket error or bad method'))
+                exception=RemoteError("socket error or bad method"))
         self.reset_error()
         return Response(value=res)
 
@@ -68,8 +72,9 @@ class EndPoint(object):
             sock = None
             try:
                 sock = socket.create_connection(
-                    (self.url.host, self.url.port), defaultConnectTimeout)
-            except:
+                    (self.url.host, self.url.port), defaultConnectTimeout
+                )
+            except Exception:
                 pass
             else:
                 self.available = True

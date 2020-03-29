@@ -8,16 +8,16 @@ from doge.common.url import URL
 
 
 class Context(object):
-    def __init__(self, url, rurl):
+    def __init__(self, url, registry_url):
         self.url = url
-        self.rurl = rurl
+        self.registry_url = registry_url
 
     def get_registry(self):
-        protocol = self.rurl.get_param('protocol', 'etcd')
-        if protocol == 'etcd':
-            return EtcdRegistry(self.rurl)
-        elif protocol == 'direct':
-            return DirectRegistry(self.rurl)
+        protocol = self.registry_url.get_param("protocol", "etcd")
+        if protocol == "etcd":
+            return EtcdRegistry(self.registry_url)
+        elif protocol == "direct":
+            return DirectRegistry(self.registry_url)
 
     def get_endpoints(self, registry, service):
         eps = {}
@@ -26,14 +26,14 @@ class Context(object):
         return eps
 
     def get_ha(self):
-        name = self.url.get_param('haStrategy', 'failover')
-        if name == 'failover':
+        name = self.url.get_param("haStrategy", "failover")
+        if name == "failover":
             return FailOverHA(self.url)
-        elif name == 'backupRequestHA':
+        elif name == "backupRequestHA":
             return BackupRequestHA(self.url)
 
     def get_lb(self, eps):
-        name = self.url.get_param('loadbalance', 'RoundrobinLB')
+        name = self.url.get_param("loadbalance", "RoundrobinLB")
         if name == "RandomLB":
             return RandomLB(self.url, eps)
         elif name == "RoundrobinLB":

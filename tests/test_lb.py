@@ -7,7 +7,7 @@ import pytest
 from doge.cluster.lb import RandomLB, RoundrobinLB, MaxSelectArraySize
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def eps():
     class C(object):
         pass

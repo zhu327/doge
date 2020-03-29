@@ -14,35 +14,36 @@ class Config(object):
         self.cfg = self.config_from_file(name)
 
     def config_from_file(self, name):
-        with open(name, 'r', encoding='utf8') as f:
+        with open(name, "r", encoding="utf8") as f:
             content = f.read()
         return json.loads(content)
 
     def parse_registry(self):
-        if not 'registry' in self.cfg:
+        if "registry" not in self.cfg:
             raise RegistryCfgError("registry config not exists")
-        rcfg = self.cfg['registry']
-        if (not 'host' in rcfg) and (not 'address' in rcfg):
+        rcfg = self.cfg["registry"]
+        if ("host" not in rcfg) and ("address" not in rcfg):
             raise RegistryCfgError("host or address must be provided")
-        host = rcfg.get('host', None)
-        port = rcfg.get('port', None)
+        host = rcfg.get("host", None)
+        port = rcfg.get("port", None)
         return URL(
             host and str(host) or host,
             port and int(port) or port,
-            params=rcfg)
+            params=rcfg
+        )
 
     def parse_service(self):
-        if not 'service' in self.cfg:
+        if "service" not in self.cfg:
             raise ServiceCfgError("service config not exists")
-        scfg = self.cfg['service']
-        if (not 'host' in scfg) or (not 'port' in scfg):
+        scfg = self.cfg["service"]
+        if ("host" not in scfg) or ("port" not in scfg):
             raise ServiceCfgError("host and port must be provided")
-        if (not 'name' in scfg) or (not 'node' in scfg):
+        if ("name" not in scfg) or ("node" not in scfg):
             raise ServiceCfgError("name and node must be provided")
-        return URL(str(scfg['host']), int(scfg['port']), params=scfg)
+        return URL(str(scfg["host"]), int(scfg["port"]), params=scfg)
 
     def parse_refer(self):
-        if not 'refer' in self.cfg:
+        if "refer" not in self.cfg:
             raise ReferCfgError("refer config not exists")
-        rcfg = self.cfg['refer']
+        rcfg = self.cfg["refer"]
         return URL(None, None, params=rcfg)
