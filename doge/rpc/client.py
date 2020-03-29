@@ -30,15 +30,15 @@ class Client(object):
     def call(self, method, *args):
         if self.available:
             r = Request(self.service, method, *args)
-            return self.filter.execute(r)
+            res = self.filter.execute(r)
+            if res.exception:
+                logger.error(str(res.exception))
+                raise res.exception
+            return res.value
         raise ClientError("client not available")
 
     def execute(self, req):
-        res = self.ha.call(req, self.lb)
-        if res.exception:
-            logger.error(str(res.exception))
-            raise res.exception
-        return res.value
+        return self.ha.call(req, self.lb)
 
     def watch(self):
         self.registry.watch(self.service, self.notify)

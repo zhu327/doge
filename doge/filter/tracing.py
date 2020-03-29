@@ -18,12 +18,12 @@ class TracingClientFilter(BaseFilter):
         with tracer.start_active_span(req.method) as scope:
             scope.span.set_tag(tags.SPAN_KIND, tags.SPAN_KIND_RPC_CLIENT)
             tracer.inject(scope.span, Format.TEXT_MAP, req.meta)
-            try:
-                res = self.next.execute(req)
-            except Exception as e:
+            res = self.next.execute(req)
+            if res.exception:
                 scope.span.set_tag("error", True)
-                scope.span.log_event({"event": "error", "error.object": e})
-                raise e
+                scope.span.log_event(
+                    {"event": "error", "exception": res.exception}
+                )
             return res
 
 
