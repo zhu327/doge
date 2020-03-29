@@ -37,6 +37,11 @@ class TracingServerFilter(BaseFilter):
 
         with tracer.start_active_span(
             req.method, child_of=span_ctx, tags=span_tags
-        ):
-            res = self.next.execute(req)
-            return res
+        ) as scope:
+            try:
+                res = self.next.execute(req)
+                return res
+            except Exception as e:
+                scope.span.set_tag("error", True)
+                scope.span.log_event({"event": "error", "exception": e})
+                raise e
