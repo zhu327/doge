@@ -8,6 +8,6 @@
     "refer": {
         "haStrategy": "failover",
         "loadBalance": "RoundrobinLB",
-        "filter": ["doge.filter.tracing.TracingClientFilter"]
+        "filters": ["doge.filter.tracing.TracingClientFilter"]
     }
 }

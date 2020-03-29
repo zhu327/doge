@@ -4,7 +4,6 @@ from doge.cluster.endpoint import EndPoint
 from doge.cluster.ha import BackupRequestHA, FailOverHA
 from doge.cluster.lb import RandomLB, RoundrobinLB
 from doge.common.url import URL
-from doge.common.utils import import_string
 from doge.filter import FilterChain
 from doge.registry.registry import DirectRegistry, EtcdRegistry
 
@@ -41,10 +40,8 @@ class Context(object):
         elif name == "RoundrobinLB":
             return RoundrobinLB(self.url, eps)
 
-    def get_filter(self, holder):
-        filters = self.url.get_param("filter", [])
-        return FilterChain(
-            [import_string(f) for f in filters]).then(holder)
+    def get_filter(self, executer):
+        return FilterChain(self).then(executer)
 
 
 def new_endpoint(k, v):

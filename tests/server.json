@@ -9,6 +9,6 @@
         "node": "n1",
         "host": "127.0.0.1",
         "port": 4399,
-        "filter": ["doge.filter.tracing.TracingServerFilter"]
+        "filters": ["doge.filter.tracing.TracingServerFilter"]
     }
 }

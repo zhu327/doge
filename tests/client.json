@@ -6,6 +6,6 @@
         "ttl": 10
     },
     "refer": {
-        "filter": ["doge.filter.tracing.TracingClientFilter"]
+        "filters": ["doge.filter.tracing.TracingClientFilter"]
     }
 }

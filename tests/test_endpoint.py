@@ -22,11 +22,10 @@ def server():
     server = StreamServer(
         ("127.0.0.1", 4399),
         DogeRPCServer(
-            SumServer,
             Context(
-                URL(None, None, None, {"name": ""}),
-                URL(None, None, None, {})
-            )
+                URL(None, None, None, {"name": ""}), URL(None, None, None, {})
+            ),
+            SumServer,
         ),
     )
     g = gevent.spawn(server.serve_forever)

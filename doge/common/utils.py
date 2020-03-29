@@ -5,6 +5,7 @@ import time
 from importlib import import_module
 
 from gsocketpool.pool import Pool
+from jaeger_client import Config
 
 
 def import_string(dotted_path):
@@ -42,3 +43,13 @@ class ConnPool(Pool):
         # conn.open()
 
         return conn
+
+
+def init_tracer(service):
+    config = Config(
+        config={"sampler": {"type": "const", "param": 1}, "logging": True},
+        service_name=service,
+    )
+
+    # this call also sets opentracing.tracer
+    return config.initialize_tracer()

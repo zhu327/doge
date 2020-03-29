@@ -16,23 +16,23 @@ logger = logging.getLogger("doge.rpc.server")
 
 
 class DogeRPCServer(RPCServer):
-    def __init__(self, cls, context):
+    def __init__(self, context, cls):
         super(DogeRPCServer, self).__init__()
-        self.name = context.url.get_param("name")
-        self.filter = context.get_filter(self)
-        self.methods = cls()
+        self._name = context.url.get_param("name")
+        self._filter = context.get_filter(self)
+        self._methods = cls()
 
-    def __getattr__(self, name):
-        if not hasattr(self.methods, name):
-            raise MethodNotFoundError('Method not found: %s', name)
+    def __getattr__(self, method_name):
+        if not hasattr(self._methods, method_name):
+            raise MethodNotFoundError('Method not found: %s', method_name)
 
         def function(*args):
-            req = Request(self.name, name, *args[1:], meta=args[0])
-            return self.filter.execute(req)
+            req = Request(self._name, method_name, *args[1:], meta=args[0])
+            return self._filter.execute(req)
         return function
 
     def execute(self, req):
-        method = getattr(self.methods, req.method)
+        method = getattr(self._methods, req.method)
         return method(*req.args)
 
 
@@ -47,7 +47,7 @@ class Server(object):
 
     def load(self, cls):
         u"""加载RPC methods类"""
-        self.handler = DogeRPCServer(cls, self.context)
+        self.handler = DogeRPCServer(self.context, cls)
 
     def register(self):
         u"""向registry服务"""
