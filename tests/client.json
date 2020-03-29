@@ -5,5 +5,7 @@
         "port": 2379,
         "ttl": 10
     },
-    "refer": {}
+    "refer": {
+        "filter": ["doge.filter.tracing.TracingClientFilter"]
+    }
 }

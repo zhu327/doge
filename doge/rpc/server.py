@@ -5,12 +5,35 @@ import signal
 
 from gevent.server import StreamServer
 from mprpc import RPCServer
+from mprpc.exceptions import MethodNotFoundError
 
 from doge.config.config import Config
 from doge.rpc.context import Context
 from doge.common.exceptions import ServerLoadError
+from doge.common.doge import Request
 
 logger = logging.getLogger("doge.rpc.server")
+
+
+class DogeRPCServer(RPCServer):
+    def __init__(self, cls, context):
+        super(DogeRPCServer, self).__init__()
+        self.name = context.url.get_param("name")
+        self.filter = context.get_filter(self)
+        self.methods = cls()
+
+    def __getattr__(self, name):
+        if not hasattr(self.methods, name):
+            raise MethodNotFoundError('Method not found: %s', name)
+
+        def function(*args):
+            req = Request(self.name, name, *args[1:], meta=args[0])
+            return self.filter.execute(req)
+        return function
+
+    def execute(self, req):
+        method = getattr(self.methods, req.method)
+        return method(*req.args)
 
 
 class Server(object):
@@ -24,13 +47,7 @@ class Server(object):
 
     def load(self, cls):
         u"""加载RPC methods类"""
-
-        class RPC(RPCServer, cls):
-            def __init__(self):
-                RPCServer.__init__(self)
-                cls.__init__(self)
-
-        self.handler = RPC()
+        self.handler = DogeRPCServer(cls, self.context)
 
     def register(self):
         u"""向registry服务"""

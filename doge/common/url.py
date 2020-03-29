@@ -2,11 +2,11 @@
 
 
 class URL(object):
-    def __init__(self, host, port, path="", params={}):
+    def __init__(self, host, port, path="", params=None):
         self.host = host
         self.port = port
         self.path = path
-        self.params = params
+        self.params = params or {}
 
     def get_int(self, key):
         if key in self.params and isinstance(self.params[key], int):

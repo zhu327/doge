@@ -45,7 +45,7 @@ class EndPoint(object):
             with self.pool.connection() as client:
                 if not client.is_connected():
                     client.open()
-                res = client.call(request.method, *request.args)
+                res = client.call(request.method, request.meta, *request.args)
         except PoolExhaustedError:
             self.record_error()
             return Response(exception=RemoteError("connection pool full"))

@@ -9,7 +9,8 @@ class Response(object):
 
 
 class Request(object):
-    def __init__(self, service, method, *args):
+    def __init__(self, service, method, *args, meta=None):
         self.service = service
         self.method = method
         self.args = args
+        self.meta = meta or {}

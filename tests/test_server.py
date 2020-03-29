@@ -44,4 +44,4 @@ class TestServer(object):
 
         client = RPCClient(str(host), int(port))
 
-        assert client.call("sum", 1, 2) == 3
+        assert client.call("sum", {}, 1, 2) == 3

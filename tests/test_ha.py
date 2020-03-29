@@ -4,16 +4,17 @@ import pytest
 import gevent
 
 from gevent.server import StreamServer
-from mprpc import RPCServer
 
 from doge.cluster.ha import FailOverHA, BackupRequestHA
 from doge.cluster.lb import RandomLB
 from doge.cluster.endpoint import EndPoint
 from doge.common.url import URL
 from doge.common.doge import Request
+from doge.rpc.server import DogeRPCServer
+from doge.rpc.context import Context
 
 
-class SumServer(RPCServer):
+class SumServer(object):
     def sum(self, x, y):
         return x + y
 
@@ -27,7 +28,16 @@ def lb():
 
 @pytest.fixture(scope="function")
 def server():
-    server = StreamServer(("127.0.0.1", 4399), SumServer())
+    server = StreamServer(
+        ("127.0.0.1", 4399),
+        DogeRPCServer(
+            SumServer,
+            Context(
+                URL(None, None, None, {"name": ""}),
+                URL(None, None, None, {})
+            ),
+        ),
+    )
     g = gevent.spawn(server.serve_forever)
     gevent.sleep(0.1)
     yield server
