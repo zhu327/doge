@@ -33,7 +33,7 @@ class Context(object):
             return BackupRequestHA(self.url)
 
     def get_lb(self, eps):
-        name = self.url.get_param("loadbalance", "RoundrobinLB")
+        name = self.url.get_param("loadBalance", "RoundrobinLB")
         if name == "RandomLB":
             return RandomLB(self.url, eps)
         elif name == "RoundrobinLB":

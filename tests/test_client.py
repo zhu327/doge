@@ -55,7 +55,7 @@ class TestClient(object):
                 "name": "test",
                 "node": "n1",
                 "haStrategy": "backupRequestHA",
-                "loadbalance": "RandomLB",
+                "loadBalance": "RandomLB",
             },
         )
         rurl = URL("127.0.0.1", 4399, params={"protocol": "direct"})

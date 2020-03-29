@@ -91,7 +91,7 @@ if __name__ == '__main__':
     },
     "refer": {
         "haStrategy": "failover", // 高可用策略, 支持 failover backupRequestHA, 默认failover
-        "loadbalance": "RoundrobinLB", // 负载均衡策略, 支持 RandomLB RoundrobinLB, 默认RoundrobinLB
+        "loadBalance": "RoundrobinLB", // 负载均衡策略, 支持 RandomLB RoundrobinLB, 默认RoundrobinLB
     }
 }
 ```
