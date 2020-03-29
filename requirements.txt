@@ -1,3 +1,4 @@
-mprpc==0.1.16
+mprpc==0.1.17
 pyformance==0.4
 python-etcd==0.4.5
+git+https://github.com/monsterxx03/jaeger-client-python.git@gevent

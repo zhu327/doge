@@ -7,6 +7,6 @@
     },
     "refer": {
         "haStrategy": "failover",
-        "loadbalance": "RoundrobinLB"
+        "loadBalance": "RoundrobinLB"
     }
 }

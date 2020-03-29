@@ -16,20 +16,20 @@ class Sum(object):
 class TestConfig(object):
     def teardown_method(self, method):
         self.g.kill()
-        self.server.registry.deregister(self.server.name,
-                                        self.server.context.url)
+        self.server.registry.deregister(
+            self.server.name, self.server.context.url)
         self.server.registry.destroy()
         self.client.destroy()
 
     def test_config(self):
-        cpath = os.path.join(os.path.dirname(__file__), 'client.json')
-        spath = os.path.join(os.path.dirname(__file__), 'server.json')
+        cpath = os.path.join(os.path.dirname(__file__), "client.json")
+        spath = os.path.join(os.path.dirname(__file__), "server.json")
         cluster = Cluster(cpath)
         server = new_server(spath)
         server.load(Sum)
         self.server = server
         self.g = gevent.spawn(server.run)
         gevent.sleep(0.1)
-        client = cluster.get_client('test')
+        client = cluster.get_client("test")
         self.client = client
-        assert client.call('sum', 1, 2)
+        assert client.call("sum", 1, 2)

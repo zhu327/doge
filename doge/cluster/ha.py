@@ -18,7 +18,7 @@ defaultBackupRequestDelayRatio = 90  # 默认的请求延迟的水位线，P90
 defaultBackupRequestMaxRetryRatio = 15  # 最大重试比例
 defaultRequestTimeout = 1000
 
-logger = logging.getLogger('doge.cluster.ha')
+logger = logging.getLogger("doge.cluster.ha")
 
 
 class FailOverHA(object):
@@ -28,14 +28,15 @@ class FailOverHA(object):
 
     def call(self, request, lb):
         retries = self.url.get_method_positive_int_value(
-            request.method, "retries", defaultRetries)
+            request.method, "retries", defaultRetries
+        )
 
         i = 0
         while i <= retries:
             i += 1
             ep = lb.select(request)
             if not ep:
-                return Response(exception=RemoteError('no available endpoint'))
+                return Response(exception=RemoteError("no available endpoint"))
             res = ep.call(request)
             if not res.exception:
                 return res
@@ -59,28 +60,38 @@ class BackupRequestHA(object):
     def call(self, request, lb):
         ep_list = lb.select_list(request)
         if not ep_list:
-            return Response(exception=RemoteError('no available endpoint'))
-        retries = self.url.get_method_int_value(request.method, 'retries', 0)
+            return Response(exception=RemoteError("no available endpoint"))
+        retries = self.url.get_method_int_value(request.method, "retries", 0)
         if retries == 0:
             return self.do_call(request, ep_list[0])
 
         backupRequestDelayRatio = self.url.get_method_positive_int_value(
-            request.method, "backupRequestDelayRatio",
-            defaultBackupRequestDelayRatio)
+            request.method,
+            "backupRequestDelayRatio",
+            defaultBackupRequestDelayRatio
+        )
         backupRequestMaxRetryRatio = self.url.get_method_positive_int_value(
-            request.method, "backupRequestMaxRetryRatio",
-            defaultBackupRequestMaxRetryRatio)
+            request.method,
+            "backupRequestMaxRetryRatio",
+            defaultBackupRequestMaxRetryRatio,
+        )
         requestTimeout = self.url.get_method_positive_int_value(
-            request.method, "requestTimeout", defaultRequestTimeout)
+            request.method, "requestTimeout", defaultRequestTimeout
+        )
 
         histogram = self.registry.histogram(request.method)
-        delay = int(histogram.get_snapshot().get_percentile(
-            backupRequestDelayRatio / 100.0))
+        delay = int(
+            histogram.get_snapshot().get_percentile(
+                backupRequestDelayRatio / 100.0
+            )
+        )
         if delay < 10:
             delay = 10
 
-        logger.debug('service: %s method: %s ha delay: %s' %
-                     (request.service, request.method, str(delay)))
+        logger.debug(
+            "service: %s method: %s ha delay: %s"
+            % (request.service, request.method, str(delay))
+        )
 
         with gevent.Timeout(requestTimeout / 1000.0, False):
             i = 0
@@ -89,7 +100,8 @@ class BackupRequestHA(object):
                 if i == 0:
                     self.update_call_record(counterRoundCount)
                 if i > 0 and not self.try_acquirePermit(
-                        backupRequestMaxRetryRatio):
+                    backupRequestMaxRetryRatio
+                ):
                     break
 
                 def func():
@@ -102,20 +114,23 @@ class BackupRequestHA(object):
                 g = gevent.spawn(func)
                 try:
                     res = g.get(timeout=(delay / 1000.0))
-                    if res: return res
+                    if res:
+                        return res
                 except gevent.timeout.Timeout:
                     pass
 
                 i += 1
 
-        return Response(exception=RemoteError('request timeout'))
+        return Response(exception=RemoteError("request timeout"))
 
     def do_call(self, request, ep):
         return ep.call(request)
 
     def update_call_record(self, threshold_limit):
-        if self.curRoundTotalCount > threshold_limit or (
-                time_ns() - self.lastResetTime) >= counterScaleThreshold:
+        if (
+            self.curRoundTotalCount > threshold_limit
+            or (time_ns() - self.lastResetTime) >= counterScaleThreshold
+        ):
             self.curRoundTotalCount = 1
             self.curRoundRetryCount = 0
             self.lastResetTime = time_ns()

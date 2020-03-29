@@ -10,17 +10,17 @@ from doge.config.config import Config
 from doge.rpc.context import Context
 from doge.common.exceptions import ServerLoadError
 
-logger = logging.getLogger('doge.rpc.server')
+logger = logging.getLogger("doge.rpc.server")
 
 
 class Server(object):
     def __init__(self, context):
-        self.name = context.url.get_param('name')
+        self.name = context.url.get_param("name")
         self.url = context.url
         self.context = context
         self.registry = context.get_registry()
         self.handler = None
-        self.limit = context.url.get_param('limitConn', 'default')
+        self.limit = context.url.get_param("limitConn", "default")
 
     def load(self, cls):
         u"""加载RPC methods类"""
@@ -48,17 +48,16 @@ class Server(object):
     def run(self):
         u"""启动RPC服务"""
         if not self.handler:
-            raise ServerLoadError('Methods not exits.')
+            raise ServerLoadError("Methods not exits.")
 
-        logger.info("Starting server at %s:%s" %
-                    (self.url.host, str(self.url.port)))
+        logger.info(
+            "Starting server at %s:%s" % (self.url.host, str(self.url.port)))
 
         self.handle_signal()
 
         server = StreamServer(
-            (self.url.host, self.url.port),
-            self.handler,
-            spawn=self.limit)
+            (self.url.host, self.url.port), self.handler, spawn=self.limit
+        )
 
         self.register()
 

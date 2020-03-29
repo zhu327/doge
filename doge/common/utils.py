@@ -8,12 +8,8 @@ from gsocketpool.pool import Pool
 
 
 def import_string(dotted_path):
-    """
-    Import a dotted module path and return the attribute/class designated by the
-    last name in the path. Raise ImportError if the import failed.
-    """
     try:
-        module_path, class_name = dotted_path.rsplit('.', 1)
+        module_path, class_name = dotted_path.rsplit(".", 1)
     except ValueError:
         msg = "%s doesn't look like a module path" % dotted_path
         raise ImportError(msg)
@@ -24,12 +20,14 @@ def import_string(dotted_path):
         return getattr(module, class_name)
     except AttributeError:
         msg = 'Module "%s" does not define a "%s" attribute/class' % (
-            dotted_path, class_name)
+            dotted_path,
+            class_name,
+        )
         raise ImportError(msg)
 
 
 def time_ns():
-    s, n = ("%.20f" % time.time()).split('.')
+    s, n = ("%.20f" % time.time()).split(".")
     return int(s) * 1e9 + int(n[:9])
 
 
