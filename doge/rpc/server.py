@@ -27,7 +27,7 @@ class DogeRPCServer(RPCServer):
 
         def function(*args):
             req = Request(self._name, method_name, *args[1:], meta=args[0])
-            res =  self._filter.execute(req)
+            res = self._filter.execute(req)
             if res.exception:
                 raise res.exception
             return res.value
