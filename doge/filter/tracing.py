@@ -41,5 +41,7 @@ class TracingServerFilter(BaseFilter):
             res = self.next.execute(req)
             if res.exception:
                 scope.span.set_tag("error", True)
-                scope.span.log_event({"event": "error", "exception": res.exception})
+                scope.span.log_event(
+                    {"event": "error", "exception": res.exception}
+                )
             return res
