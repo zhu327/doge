@@ -3,14 +3,13 @@
 import logging
 import signal
 
+from doge.common.doge import Request, Response
+from doge.common.exceptions import ServerLoadError
+from doge.config.config import Config
+from doge.rpc.context import Context
 from gevent.server import StreamServer
 from mprpc import RPCServer
 from mprpc.exceptions import MethodNotFoundError
-
-from doge.config.config import Config
-from doge.rpc.context import Context
-from doge.common.exceptions import ServerLoadError
-from doge.common.doge import Request
 
 logger = logging.getLogger("doge.rpc.server")
 
@@ -28,12 +27,19 @@ class DogeRPCServer(RPCServer):
 
         def function(*args):
             req = Request(self._name, method_name, *args[1:], meta=args[0])
-            return self._filter.execute(req)
+            res =  self._filter.execute(req)
+            if res.exception:
+                raise res.exception
+            return res.value
         return function
 
     def execute(self, req):
         method = getattr(self._methods, req.method)
-        return method(*req.args)
+        try:
+            value = method(*req.args)
+            return Response(value=value)
+        except Exception as e:
+            return Response(exception=e)
 
 
 class Server(object):

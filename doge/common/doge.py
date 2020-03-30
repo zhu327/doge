@@ -2,7 +2,7 @@
 
 
 class Response(object):
-    def __init__(self, code=0, value=None, exception=None):
+    def __init__(self, value=None, exception=None):
         self.value = value
         self.exception = exception
         self.prosess_time = 0
