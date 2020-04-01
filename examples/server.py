@@ -1,15 +1,17 @@
 # coding: utf-8
 
+import logging
+
 from gevent import monkey
+
+from doge.common.utils import init_tracer
+from doge.rpc.server import new_server
 
 monkey.patch_socket()
 
-import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-from doge.rpc.server import new_server
-from doge.common.utils import init_tracer
 
 init_tracer("server")
 
@@ -21,6 +23,6 @@ class Sum(object):
 
 
 if __name__ == "__main__":
-    server = new_server("server.json")  # 基于配置文件实例化server对象
+    server = new_server("server.yml")  # 基于配置文件实例化server对象
     server.load(Sum)  # 加载暴露rpc方法类
     server.run()  # 启动服务并注册节点信息到注册中心

@@ -1,0 +1,11 @@
+registry:
+  protocol: etcd
+  address: 127.0.0.1:2379
+  ttl: 10
+service:
+  name: test
+  node: n1
+  host: 127.0.0.1
+  port: 4399
+  filters:
+    - doge.filter.tracing.TracingServerFilter

@@ -1,0 +1,8 @@
+registry:
+  protocol: etcd
+  host: 127.0.0.1
+  port: 2379
+  ttl: 10
+refer:
+  filters:
+    - doge.filter.tracing.TracingClientFilter

@@ -1,11 +1,12 @@
 # coding: utf-8
 
-import json
 from io import open
 
+import yaml
+
+from doge.common.exceptions import (ReferCfgError, RegistryCfgError,
+                                    ServiceCfgError)
 from doge.common.url import URL
-from doge.common.exceptions import (RegistryCfgError, ServiceCfgError,
-                                    ReferCfgError)
 
 
 class Config(object):
@@ -15,8 +16,7 @@ class Config(object):
 
     def config_from_file(self, name):
         with open(name, "r", encoding="utf8") as f:
-            content = f.read()
-        return json.loads(content)
+            return yaml.load(f, Loader=yaml.FullLoader)
 
     def parse_registry(self):
         if "registry" not in self.cfg:

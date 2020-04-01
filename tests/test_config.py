@@ -22,8 +22,9 @@ class TestConfig(object):
         self.client.destroy()
 
     def test_config(self):
-        cpath = os.path.join(os.path.dirname(__file__), "client.json")
-        spath = os.path.join(os.path.dirname(__file__), "server.json")
+        cpath = os.path.join(os.path.dirname(__file__), "client.yml")
+        spath = os.path.join(os.path.dirname(__file__), "server.yml")
+        cluster = Cluster(cpath)
         server = new_server(spath)
         server.load(Sum)
         self.server = server
