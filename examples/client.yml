@@ -8,3 +8,4 @@ refer:
   loadBalance: RoundrobinLB
   filters:
     - doge.filter.tracing.TracingClientFilter
+    - doge.filter.metric.MetricClientFilter

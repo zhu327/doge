@@ -1,4 +1,5 @@
 mprpc==0.1.17
+prometheus-client==0.7.1
 pyformance==0.4
 python-etcd==0.4.5
 pyyaml==5.3.1

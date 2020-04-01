@@ -11,3 +11,4 @@ service:
   limitConn: 100
   filters:
     - doge.filter.tracing.TracingServerFilter
+    - doge.filter.metric.MetricServerFilter
