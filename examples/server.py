@@ -1,12 +1,14 @@
 # coding: utf-8
 
-from gevent import monkey
-monkey.patch_socket()
-
 import logging
-logging.basicConfig(level=logging.DEBUG)
+
+from gevent import monkey
 
 from doge.rpc.server import new_server
+
+monkey.patch_socket()
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 # 定义rpc方法类
@@ -16,6 +18,6 @@ class Sum(object):
 
 
 if __name__ == '__main__':
-    server = new_server('server.json')  # 基于配置文件实例化server对象
+    server = new_server('server.yml')  # 基于配置文件实例化server对象
     server.load(Sum)  # 加载暴露rpc方法类
     server.run()  # 启动服务并注册节点信息到注册中心
