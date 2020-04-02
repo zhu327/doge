@@ -17,7 +17,10 @@ class TracingClientFilter(BaseFilter):
     def execute(self, req):
         with tracer.start_active_span(req.method) as scope:
             scope.span.set_tag(tags.SPAN_KIND, tags.SPAN_KIND_RPC_CLIENT)
+            scope.span.set_tag("doge_service", req.service)
+            scope.span.set_tag("doge_method", req.method)
             tracer.inject(scope.span, Format.TEXT_MAP, req.meta)
+
             res = self.next.execute(req)
             if res.exception:
                 scope.span.set_tag("error", True)
@@ -38,6 +41,9 @@ class TracingServerFilter(BaseFilter):
         with tracer.start_active_span(
             req.method, child_of=span_ctx, tags=span_tags
         ) as scope:
+            scope.span.set_tag("doge_service", req.service)
+            scope.span.set_tag("doge_method", req.method)
+
             res = self.next.execute(req)
             if res.exception:
                 scope.span.set_tag("error", True)
