@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging
-from typing import Callable, Dict, Union
+from typing import Callable, Dict
 
 import etcd  # type: ignore
 import gevent  # type: ignore
@@ -45,7 +45,7 @@ class EtcdRegistry(object):
 
         self.etcd.delete(n_key)
 
-    def discovery(self, service: str) -> Dict[str, Union[str, None]]:
+    def discovery(self, service: str) -> Dict[str, str]:
         s_key = self._svc_key(service)
         res = self.etcd.read(s_key, recursive=True)
 
@@ -108,11 +108,11 @@ class DirectRegistry(object):
     def deregister(self, service, url):
         pass
 
-    def discovery(self, service: str) -> Dict[int, str]:
+    def discovery(self, service: str) -> Dict[str, str]:
         address = self.url.get_param("address")
         if address:
-            return {i: add for i, add in enumerate(address.split(","))}
-        return {0: "%s:%s" % (self.url.host, str(self.url.port))}
+            return {str(i): add for i, add in enumerate(address.split(","))}
+        return {"0": "%s:%s" % (self.url.host, str(self.url.port))}
 
     def watch(self, service: str, callback: Callable) -> None:
         pass

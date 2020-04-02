@@ -105,4 +105,4 @@ class TestEtcdRegistry(object):
 class TestDirectRegistry(object):
     def test_direct(self):
         registry = DirectRegistry(url)
-        assert registry.discovery("")[0] == "127.0.0.1:2379"
+        assert registry.discovery("")["0"] == "127.0.0.1:2379"
