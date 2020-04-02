@@ -25,9 +25,9 @@ DOGE_SERVER_HANDLED_LATENCY_SECONDS = Histogram(
 )
 
 
-class MetricServerFilter(BaseFilter):
+class MetricsServerFilter(BaseFilter):
     def __init__(self, context, _next):
-        super(MetricServerFilter, self).__init__(context, _next)
+        super(MetricsServerFilter, self).__init__(context, _next)
 
     def execute(self, req):
         doge_service = req.service

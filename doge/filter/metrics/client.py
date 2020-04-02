@@ -22,9 +22,9 @@ DOGE_CLIENT_COMPLETED_LATENCY_SECONDS_HISTOGRAM = Histogram(
 )
 
 
-class MetricClientFilter(BaseFilter):
+class MetricsClientFilter(BaseFilter):
     def __init__(self, context, _next):
-        super(MetricClientFilter, self).__init__(context, _next)
+        super(MetricsClientFilter, self).__init__(context, _next)
 
     def execute(self, req):
         doge_service = req.service
