@@ -5,7 +5,7 @@ import gevent
 from gevent import sleep
 
 from doge.rpc.server import Server
-from doge.rpc.context import Context
+from doge.common.context import Context
 from doge.common.url import URL
 from doge.rpc.client import Client
 from doge.common.exceptions import RemoteError

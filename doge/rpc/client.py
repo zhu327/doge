@@ -5,15 +5,16 @@ from typing import Any, Dict
 
 from gevent.lock import BoundedSemaphore  # type: ignore
 
-from doge.common.doge import Request, Response
+from doge.common.doge import Executer, Request, Response
 from doge.common.exceptions import ClientError
 from doge.config.config import Config
-from doge.rpc.context import Context, new_endpoint
+from doge.common.context import Context
+from doge.cluster.endpoint import new_endpoint
 
 logger = logging.getLogger("doge.rpc.client")
 
 
-class Client(object):
+class Client(Executer):
     def __init__(self, context: Context, service: str) -> None:
         self.service = service
         self.url = context.url

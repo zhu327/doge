@@ -11,7 +11,7 @@ from doge.cluster.endpoint import EndPoint
 from doge.common.url import URL
 from doge.common.doge import Request
 from doge.rpc.server import DogeRPCServer
-from doge.rpc.context import Context
+from doge.common.context import Context
 
 
 class SumServer(object):

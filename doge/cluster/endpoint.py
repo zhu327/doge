@@ -2,6 +2,8 @@
 
 import time
 
+from typing import Union
+
 import gevent  # type: ignore
 from gevent import socket  # type: ignore
 from gsocketpool.exceptions import PoolExhaustedError  # type: ignore
@@ -92,3 +94,9 @@ class EndPoint(object):
     def destroy(self) -> None:
         self.available = False
         del self.pool
+
+
+def new_endpoint(k: Union[int, str], v: str) -> EndPoint:
+    host, port = v.split(":")
+    url = URL(str(host), int(port), k)
+    return EndPoint(url)

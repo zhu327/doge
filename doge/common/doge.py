@@ -1,6 +1,6 @@
 # coding: utf-8
 
-
+from abc import ABCMeta, abstractmethod
 from typing import Any, Optional
 
 
@@ -21,3 +21,9 @@ class Request(object):
         self.method = method
         self.args = args
         self.meta = meta or {}
+
+
+class Executer(metaclass=ABCMeta):
+    @abstractmethod
+    def execute(self, req: Request) -> Response:
+        pass

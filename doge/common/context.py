@@ -5,10 +5,12 @@ from typing import Any, Dict, List, Union
 from doge.cluster.endpoint import EndPoint
 from doge.cluster.ha import BackupRequestHA, FailOverHA
 from doge.cluster.lb import RandomLB, RoundrobinLB
+from doge.common.doge import Executer
 from doge.common.url import URL
 from doge.filter import FilterChain
 from doge.registry.registry import DirectRegistry, EtcdRegistry
 from doge.common.exceptions import ReferCfgError
+from doge.cluster.endpoint import new_endpoint
 
 
 class Context(object):
@@ -47,11 +49,5 @@ class Context(object):
             return RoundrobinLB(self.url, eps)
         raise ReferCfgError
 
-    def get_filter(self, executer: Any) -> Any:  # TODO 定义Executer
+    def get_filter(self, executer: Executer) -> Executer:
         return FilterChain(self).then(executer)
-
-
-def new_endpoint(k: Union[int, str], v: str) -> EndPoint:
-    host, port = v.split(":")
-    url = URL(str(host), int(port), k)
-    return EndPoint(url)
