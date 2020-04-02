@@ -1,8 +1,8 @@
 # coding: utf-8
 
-import opentracing
-from opentracing.ext import tags
-from opentracing.propagation import Format
+import opentracing  # type: ignore
+from opentracing.ext import tags  # type: ignore
+from opentracing.propagation import Format  # type: ignore
 
 from doge.common.doge import Request, Response
 from doge.filter import BaseFilter

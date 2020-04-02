@@ -3,8 +3,8 @@
 import logging
 from typing import Union
 
-import gevent
-from pyformance import MetricsRegistry
+import gevent  # type: ignore
+from pyformance import MetricsRegistry  # type: ignore
 
 from doge.cluster.endpoint import EndPoint
 from doge.cluster.lb import RandomLB, RoundrobinLB
@@ -62,7 +62,9 @@ class BackupRequestHA(object):
         self.registry = MetricsRegistry()
         self.lastResetTime = time_ns()
 
-    def call(self, request: Request, lb: RandomLB) -> Response:
+    def call(
+        self, request: Request, lb: Union[RandomLB, RoundrobinLB]
+    ) -> Response:
         ep_list = lb.select_list(request)
         if not ep_list:
             return Response(exception=RemoteError("no available endpoint"))

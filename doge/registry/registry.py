@@ -3,9 +3,9 @@
 import logging
 from typing import Callable, Dict, Union
 
-import etcd
-import gevent
-from etcd.client import Client
+import etcd  # type: ignore
+import gevent  # type: ignore
+from etcd.client import Client  # type: ignore
 
 from doge.common.url import URL
 from doge.common.utils import str_to_host
@@ -50,7 +50,8 @@ class EtcdRegistry(object):
         res = self.etcd.read(s_key, recursive=True)
 
         logger.info(
-            "discovery key: %s length: %s" % (s_key, len(res._children)))
+            "discovery key: %s length: %s" % (s_key, len(res._children))
+        )
 
         return {child.key: child.value for child in res.children}
 

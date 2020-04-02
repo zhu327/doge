@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import random
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 from doge.cluster.endpoint import EndPoint
 from doge.common.doge import Request
@@ -21,14 +21,14 @@ class RandomLB(object):
         self.endpoints = endpoints
         self.weight = None
 
-    def select(self, request: Request) -> EndPoint:
+    def select(self, request: Request) -> Optional[EndPoint]:
         _, ep = select_one_random(self.endpoints)
         return ep
 
     def select_list(self, request: Request) -> List[EndPoint]:
         index, ep = select_one_random(self.endpoints)
         if not ep:
-            return ep
+            return []
         return select_list_from_index(self.endpoints, index)
 
 
@@ -53,9 +53,7 @@ class RoundrobinLB(object):
             return ep
         return select_list_from_index(self.endpoints, index)
 
-    def roundrobin_select(
-        self,
-    ) -> Union[Tuple[int, EndPoint], Tuple[int, None]]:
+    def roundrobin_select(self,) -> Tuple[int, Optional[EndPoint]]:
         eps = self.endpoints
         if not eps:
             return -1, None
@@ -68,7 +66,7 @@ class RoundrobinLB(object):
         return select_one_random(self.endpoints)
 
 
-def select_one_random(eps: List[EndPoint]) -> Tuple[int, EndPoint]:
+def select_one_random(eps: List[EndPoint]) -> Tuple[int, Optional[EndPoint]]:
     eps_len = len(eps)
     if eps_len == 0:
         return -1, None

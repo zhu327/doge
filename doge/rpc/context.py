@@ -8,6 +8,7 @@ from doge.cluster.lb import RandomLB, RoundrobinLB
 from doge.common.url import URL
 from doge.filter import FilterChain
 from doge.registry.registry import DirectRegistry, EtcdRegistry
+from doge.common.exceptions import ReferCfgError
 
 
 class Context(object):
@@ -36,6 +37,7 @@ class Context(object):
             return FailOverHA(self.url)
         elif name == "backupRequestHA":
             return BackupRequestHA(self.url)
+        raise ReferCfgError
 
     def get_lb(self, eps: List[EndPoint]) -> Union[RoundrobinLB, RandomLB]:
         name = self.url.get_param("loadBalance", "RoundrobinLB")
@@ -43,6 +45,7 @@ class Context(object):
             return RandomLB(self.url, eps)
         elif name == "RoundrobinLB":
             return RoundrobinLB(self.url, eps)
+        raise ReferCfgError
 
     def get_filter(self, executer: Any) -> Any:  # TODO 定义Executer
         return FilterChain(self).then(executer)

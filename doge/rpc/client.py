@@ -3,7 +3,7 @@
 import logging
 from typing import Any, Dict
 
-from gevent.lock import BoundedSemaphore
+from gevent.lock import BoundedSemaphore  # type: ignore
 
 from doge.common.doge import Request, Response
 from doge.common.exceptions import ClientError
@@ -77,7 +77,7 @@ class Cluster(object):
             self.config.parse_refer(), self.config.parse_registry()
         )
 
-        self.clients = {}
+        self.clients: Dict[str, Client] = {}
         self.sem = BoundedSemaphore(1)
 
     def get_client(self, service: str) -> Client:

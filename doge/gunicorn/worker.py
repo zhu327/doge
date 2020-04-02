@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from gunicorn.workers.ggevent import GeventWorker
+from gunicorn.workers.ggevent import GeventWorker  # type: ignore
 
 
 class DogeWorker(GeventWorker):

@@ -2,11 +2,11 @@
 
 import time
 
-import gevent
-from gevent import socket
-from gsocketpool.exceptions import PoolExhaustedError
-from mprpc import RPCPoolClient
-from mprpc.exceptions import RPCError, RPCProtocolError
+import gevent  # type: ignore
+from gevent import socket  # type: ignore
+from gsocketpool.exceptions import PoolExhaustedError  # type: ignore
+from mprpc import RPCPoolClient  # type: ignore
+from mprpc.exceptions import RPCError, RPCProtocolError  # type: ignore
 
 from doge.common.doge import Request, Response
 from doge.common.exceptions import RemoteError

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 
-from typing import Any, List, Optional, Union
+from typing import Any, Optional, Union
 
 
 class URL(object):
@@ -30,9 +30,7 @@ class URL(object):
         value = self.get_int_value(key, default)
         return default if value < 1 else value
 
-    def get_param(
-        self, key: str, default: Any = None
-    ) -> Optional[Union[int, List[str], str]]:
+    def get_param(self, key: str, default: Any = None) -> Any:
         if key in self.params and self.params[key]:
             return self.params[key]
         return default

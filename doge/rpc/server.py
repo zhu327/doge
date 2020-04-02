@@ -2,11 +2,11 @@
 
 import logging
 import signal
-from typing import Any, Callable
+from typing import Callable, Optional, Type
 
-from gevent.server import StreamServer
-from mprpc import RPCServer
-from mprpc.exceptions import MethodNotFoundError
+from gevent.server import StreamServer  # type: ignore
+from mprpc import RPCServer  # type: ignore
+from mprpc.exceptions import MethodNotFoundError  # type: ignore
 
 from doge.common.doge import Request, Response
 from doge.common.exceptions import ServerLoadError
@@ -17,7 +17,7 @@ logger = logging.getLogger("doge.rpc.server")
 
 
 class DogeRPCServer(RPCServer):
-    def __init__(self, context: Context, cls: Any) -> None:
+    def __init__(self, context: Context, cls: Type) -> None:
         super(DogeRPCServer, self).__init__()
         self._name = context.url.get_param("name")
         self._filter = context.get_filter(self)
@@ -51,10 +51,10 @@ class Server(object):
         self.url = context.url
         self.context = context
         self.registry = context.get_registry()
-        self.handler = None
+        self.handler: Optional[DogeRPCServer] = None
         self.limit = context.url.get_param("limitConn", "default")
 
-    def load(self, cls: Any) -> None:
+    def load(self, cls: Type) -> None:
         u"""加载RPC methods类"""
         self.handler = DogeRPCServer(self.context, cls)
 

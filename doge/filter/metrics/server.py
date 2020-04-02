@@ -1,4 +1,4 @@
-from prometheus_client import Counter, Histogram
+from prometheus_client import Counter, Histogram  # type: ignore
 
 from doge.common.doge import Request, Response
 from doge.filter import BaseFilter

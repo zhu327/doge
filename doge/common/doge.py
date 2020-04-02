@@ -3,12 +3,10 @@
 
 from typing import Any, Optional
 
-from doge.common.exceptions import DogeError
-
 
 class Response(object):
     def __init__(
-        self, value: Any = None, exception: Optional[DogeError] = None,
+        self, value: Any = None, exception: Optional[Exception] = None,
     ) -> None:
         self.value = value
         self.exception = exception

@@ -1,4 +1,4 @@
-from gevent.monkey import patch_thread
+from gevent.monkey import patch_thread  # type: ignore
 
 from doge.common.utils import import_string
 

@@ -4,10 +4,10 @@ import time
 from importlib import import_module
 from typing import Any, Tuple
 
-from gsocketpool.pool import Pool
-from jaeger_client import Config
-from jaeger_client.tracer import Tracer
-from mprpc.client import RPCPoolClient
+from gsocketpool.pool import Pool  # type: ignore
+from jaeger_client import Config  # type: ignore
+from jaeger_client.tracer import Tracer  # type: ignore
+from mprpc.client import RPCPoolClient  # type: ignore
 
 
 def import_string(dotted_path: str,) -> Any:
