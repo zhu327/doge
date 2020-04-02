@@ -1,19 +1,20 @@
 # coding: utf-8
 
 import logging
+from typing import Any, Dict
 
 from gevent.lock import BoundedSemaphore
 
-from doge.common.doge import Request
+from doge.common.doge import Request, Response
 from doge.common.exceptions import ClientError
-from doge.rpc.context import new_endpoint, Context
 from doge.config.config import Config
+from doge.rpc.context import Context, new_endpoint
 
 logger = logging.getLogger("doge.rpc.client")
 
 
 class Client(object):
-    def __init__(self, context, service):
+    def __init__(self, context: Context, service: str) -> None:
         self.service = service
         self.url = context.url
         self.context = context
@@ -27,7 +28,7 @@ class Client(object):
 
         self.watch()
 
-    def call(self, method, *args):
+    def call(self, method: str, *args) -> Any:
         if self.available:
             r = Request(self.service, method, *args)
             res = self.filter.execute(r)
@@ -37,13 +38,13 @@ class Client(object):
             return res.value
         raise ClientError("client not available")
 
-    def execute(self, req):
+    def execute(self, req: Request) -> Response:
         return self.ha.call(req, self.lb)
 
-    def watch(self):
+    def watch(self) -> None:
         self.registry.watch(self.service, self.notify)
 
-    def notify(self, event):
+    def notify(self, event: Dict[str, Any]) -> None:
         if event["action"] == "delete":
             ep = self.endpoints[event["key"]]
             self.lb.endpoints.remove(ep)
@@ -53,7 +54,7 @@ class Client(object):
             self.endpoints[event["key"]] = ep
             self.lb.endpoints.append(ep)
 
-    def destroy(self):
+    def destroy(self) -> None:
         if not self.closed:
             self.closed = True
             self.registry.destroy()
@@ -68,19 +69,18 @@ class Client(object):
 
 
 class Cluster(object):
-    def __init__(self, config_file):
+    def __init__(self, config_file: str) -> None:
         u"""Cluster 抽象"""
         self.config_file = config_file
         self.config = Config(config_file)
         self.context = Context(
-            self.config.parse_refer(),
-            self.config.parse_registry()
+            self.config.parse_refer(), self.config.parse_registry()
         )
 
         self.clients = {}
         self.sem = BoundedSemaphore(1)
 
-    def get_client(self, service):
+    def get_client(self, service: str) -> Client:
         if service not in self.clients:
             self.sem.acquire()
             if service not in self.clients:

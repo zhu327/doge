@@ -4,12 +4,13 @@ import time
 
 import gevent
 from gevent import socket
+from gsocketpool.exceptions import PoolExhaustedError
 from mprpc import RPCPoolClient
 from mprpc.exceptions import RPCError, RPCProtocolError
-from gsocketpool.exceptions import PoolExhaustedError
 
-from doge.common.doge import Response
+from doge.common.doge import Request, Response
 from doge.common.exceptions import RemoteError
+from doge.common.url import URL
 from doge.common.utils import ConnPool
 
 defaultPoolSize = 3
@@ -20,14 +21,14 @@ defaultErrorCountThreshold = 10
 
 
 class EndPoint(object):
-    def __init__(self, url):
+    def __init__(self, url: URL) -> None:
         self.url = url
         self.available = True
         self.error_count = 0
         self.keepalive_count = 0
         self.pool = self.pool_factory()
 
-    def pool_factory(self):
+    def pool_factory(self) -> ConnPool:
         return ConnPool(
             RPCPoolClient,
             dict(
@@ -40,7 +41,7 @@ class EndPoint(object):
             reap_expired_connections=False,
         )
 
-    def call(self, request):
+    def call(self, request: Request) -> Response:
         try:
             with self.pool.connection() as client:
                 if not client.is_connected():
@@ -54,11 +55,12 @@ class EndPoint(object):
         except (IOError, socket.timeout):
             self.record_error()
             return Response(
-                exception=RemoteError("socket error or bad method"))
+                exception=RemoteError("socket error or bad method")
+            )
         self.reset_error()
         return Response(value=res)
 
-    def record_error(self):
+    def record_error(self) -> None:
         self.error_count += 1
         if self.error_count == defaultErrorCountThreshold:
             self.available = False
@@ -84,9 +86,9 @@ class EndPoint(object):
                 if sock:
                     sock.close()
 
-    def reset_error(self):
+    def reset_error(self) -> None:
         self.error_count = 0
 
-    def destroy(self):
+    def destroy(self) -> None:
         self.available = False
         del self.pool

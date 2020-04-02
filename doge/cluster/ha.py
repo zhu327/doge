@@ -1,13 +1,16 @@
 # coding: utf-8
 
 import logging
+from typing import Union
 
 import gevent
-
 from pyformance import MetricsRegistry
 
+from doge.cluster.endpoint import EndPoint
+from doge.cluster.lb import RandomLB, RoundrobinLB
+from doge.common.doge import Request, Response
 from doge.common.exceptions import RemoteError
-from doge.common.doge import Response
+from doge.common.url import URL
 from doge.common.utils import time_ns
 
 defaultRetries = 0
@@ -22,11 +25,13 @@ logger = logging.getLogger("doge.cluster.ha")
 
 
 class FailOverHA(object):
-    def __init__(self, url):
+    def __init__(self, url: URL) -> None:
         self.url = url
         self.name = "failover"
 
-    def call(self, request, lb):
+    def call(
+        self, request: Request, lb: Union[RandomLB, RoundrobinLB]
+    ) -> Response:
         retries = self.url.get_method_positive_int_value(
             request.method, "retries", defaultRetries
         )
@@ -44,7 +49,7 @@ class FailOverHA(object):
 
 
 class BackupRequestHA(object):
-    def __init__(self, url):
+    def __init__(self, url: URL) -> None:
         self.url = url
         self.name = "backupRequestHA"
 
@@ -53,11 +58,11 @@ class BackupRequestHA(object):
 
         self.init()
 
-    def init(self):
+    def init(self) -> None:
         self.registry = MetricsRegistry()
         self.lastResetTime = time_ns()
 
-    def call(self, request, lb):
+    def call(self, request: Request, lb: RandomLB) -> Response:
         ep_list = lb.select_list(request)
         if not ep_list:
             return Response(exception=RemoteError("no available endpoint"))
@@ -68,7 +73,7 @@ class BackupRequestHA(object):
         backupRequestDelayRatio = self.url.get_method_positive_int_value(
             request.method,
             "backupRequestDelayRatio",
-            defaultBackupRequestDelayRatio
+            defaultBackupRequestDelayRatio,
         )
         backupRequestMaxRetryRatio = self.url.get_method_positive_int_value(
             request.method,
@@ -123,10 +128,10 @@ class BackupRequestHA(object):
 
         return Response(exception=RemoteError("request timeout"))
 
-    def do_call(self, request, ep):
+    def do_call(self, request: Request, ep: EndPoint) -> Response:
         return ep.call(request)
 
-    def update_call_record(self, threshold_limit):
+    def update_call_record(self, threshold_limit: int) -> None:
         if (
             self.curRoundTotalCount > threshold_limit
             or (time_ns() - self.lastResetTime) >= counterScaleThreshold
@@ -137,7 +142,7 @@ class BackupRequestHA(object):
         else:
             self.curRoundTotalCount += 1
 
-    def try_acquirePermit(self, threshold_limit):
+    def try_acquirePermit(self, threshold_limit: int) -> bool:
         if self.curRoundRetryCount >= threshold_limit:
             return False
         self.curRoundRetryCount += 1

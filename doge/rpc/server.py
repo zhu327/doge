@@ -2,28 +2,30 @@
 
 import logging
 import signal
+from typing import Any, Callable
+
+from gevent.server import StreamServer
+from mprpc import RPCServer
+from mprpc.exceptions import MethodNotFoundError
 
 from doge.common.doge import Request, Response
 from doge.common.exceptions import ServerLoadError
 from doge.config.config import Config
 from doge.rpc.context import Context
-from gevent.server import StreamServer
-from mprpc import RPCServer
-from mprpc.exceptions import MethodNotFoundError
 
 logger = logging.getLogger("doge.rpc.server")
 
 
 class DogeRPCServer(RPCServer):
-    def __init__(self, context, cls):
+    def __init__(self, context: Context, cls: Any) -> None:
         super(DogeRPCServer, self).__init__()
         self._name = context.url.get_param("name")
         self._filter = context.get_filter(self)
         self._methods = cls()
 
-    def __getattr__(self, method_name):
+    def __getattr__(self, method_name: str) -> Callable:
         if not hasattr(self._methods, method_name):
-            raise MethodNotFoundError('Method not found: %s', method_name)
+            raise MethodNotFoundError("Method not found: %s", method_name)
 
         def function(*args):
             req = Request(self._name, method_name, *args[1:], meta=args[0])
@@ -31,9 +33,10 @@ class DogeRPCServer(RPCServer):
             if res.exception:
                 raise res.exception
             return res.value
+
         return function
 
-    def execute(self, req):
+    def execute(self, req: Request) -> Response:
         method = getattr(self._methods, req.method)
         try:
             value = method(*req.args)
@@ -43,7 +46,7 @@ class DogeRPCServer(RPCServer):
 
 
 class Server(object):
-    def __init__(self, context):
+    def __init__(self, context: Context) -> None:
         self.name = context.url.get_param("name")
         self.url = context.url
         self.context = context
@@ -51,15 +54,15 @@ class Server(object):
         self.handler = None
         self.limit = context.url.get_param("limitConn", "default")
 
-    def load(self, cls):
+    def load(self, cls: Any) -> None:
         u"""加载RPC methods类"""
         self.handler = DogeRPCServer(self.context, cls)
 
-    def register(self):
+    def register(self) -> None:
         u"""向registry服务"""
         self.registry.register(self.name, self.url)
 
-    def handle_signal(self):
+    def handle_signal(self) -> None:
         u"""注册信号"""
 
         def handler(signum, frame):
@@ -74,7 +77,8 @@ class Server(object):
             raise ServerLoadError("Methods not exits.")
 
         logger.info(
-            "Starting server at %s:%s" % (self.url.host, str(self.url.port)))
+            "Starting server at %s:%s" % (self.url.host, str(self.url.port))
+        )
 
         self.handle_signal()
 
@@ -91,7 +95,7 @@ class Server(object):
         pass
 
 
-def new_server(config_file):
+def new_server(config_file: str) -> Server:
     u"""从配置文件生成server"""
     config = Config(config_file)
     context = Context(config.parse_service(), config.parse_registry())

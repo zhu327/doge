@@ -1,5 +1,6 @@
 from prometheus_client import Counter, Histogram
 
+from doge.common.doge import Request, Response
 from doge.filter import BaseFilter
 
 DOGE_SERVER_STARTED_TOTAL_COUNTER = Counter(
@@ -26,10 +27,7 @@ DOGE_SERVER_HANDLED_LATENCY_SECONDS = Histogram(
 
 
 class MetricsServerFilter(BaseFilter):
-    def __init__(self, context, _next):
-        super(MetricsServerFilter, self).__init__(context, _next)
-
-    def execute(self, req):
+    def execute(self, req: Request) -> Response:
         doge_service = req.service
         doge_method = req.method
 

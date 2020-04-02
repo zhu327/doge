@@ -1,6 +1,11 @@
 # coding: utf-8
 
 import random
+from typing import List, Optional, Tuple, Union
+
+from doge.cluster.endpoint import EndPoint
+from doge.common.doge import Request
+from doge.common.url import URL
 
 MaxSelectArraySize = 3
 defaultWeight = 1
@@ -9,16 +14,18 @@ defaultWeight = 1
 class RandomLB(object):
     u"""随机 Load Balance"""
 
-    def __init__(self, url, endpoints, weight=None):
+    def __init__(
+        self, url: URL, endpoints: List[EndPoint], weight: None = None
+    ) -> None:
         self.url = url
         self.endpoints = endpoints
         self.weight = None
 
-    def select(self, request):
+    def select(self, request: Request) -> EndPoint:
         _, ep = select_one_random(self.endpoints)
         return ep
 
-    def select_list(self, request):
+    def select_list(self, request: Request) -> List[EndPoint]:
         index, ep = select_one_random(self.endpoints)
         if not ep:
             return ep
@@ -28,13 +35,15 @@ class RandomLB(object):
 class RoundrobinLB(object):
     u"""Roundrobin Load Balance"""
 
-    def __init__(self, url, endpoints, weight=None):
+    def __init__(
+        self, url: URL, endpoints: List[EndPoint], weight: None = None
+    ) -> None:
         self.url = url
         self.endpoints = endpoints
         self.weight = None
         self.index = 0
 
-    def select(self, request):
+    def select(self, request: Request) -> Optional[EndPoint]:
         _, ep = self.roundrobin_select()
         return ep
 
@@ -44,7 +53,9 @@ class RoundrobinLB(object):
             return ep
         return select_list_from_index(self.endpoints, index)
 
-    def roundrobin_select(self):
+    def roundrobin_select(
+        self,
+    ) -> Union[Tuple[int, EndPoint], Tuple[int, None]]:
         eps = self.endpoints
         if not eps:
             return -1, None
@@ -57,7 +68,7 @@ class RoundrobinLB(object):
         return select_one_random(self.endpoints)
 
 
-def select_one_random(eps):
+def select_one_random(eps: List[EndPoint]) -> Tuple[int, EndPoint]:
     eps_len = len(eps)
     if eps_len == 0:
         return -1, None
@@ -75,7 +86,7 @@ def select_one_random(eps):
     return -1, None
 
 
-def select_list_from_index(eps, index):
+def select_list_from_index(eps: List[EndPoint], index: int) -> List[EndPoint]:
     if not eps or index < 0:
         return []
 

@@ -1,10 +1,13 @@
 # coding: utf-8
 
 import logging
+from typing import Callable, Dict, Union
 
-import gevent
 import etcd
+import gevent
+from etcd.client import Client
 
+from doge.common.url import URL
 from doge.common.utils import str_to_host
 
 logger = logging.getLogger("doge.registry.etcd")
@@ -13,11 +16,11 @@ logger = logging.getLogger("doge.registry.etcd")
 class EtcdRegistry(object):
     """Register etcd"""
 
-    def __init__(self, url):
+    def __init__(self, url: URL) -> None:
         self.url = url
         self.etcd = self.registry_factory(url)
 
-    def registry_factory(self, url):
+    def registry_factory(self, url: URL) -> Client:
         address = url.get_param("address")
         if address:
             return etcd.Client(
@@ -26,7 +29,7 @@ class EtcdRegistry(object):
             )
         return etcd.Client(host=url.host, port=url.port)
 
-    def register(self, service, url):
+    def register(self, service: str, url: URL) -> None:
         n_key = self._node_key(service, url.get_param("node"))
         value = "{}:{}".format(url.host, url.port)
         ttl = self.url.get_param("ttl", 10)
@@ -35,14 +38,14 @@ class EtcdRegistry(object):
 
         self.heartbeat(n_key, value, ttl=ttl)
 
-    def deregister(self, service, url):
+    def deregister(self, service: str, url: URL) -> None:
         n_key = self._node_key(service, url.get_param("node"))
 
         logger.debug("deregister key: %s" % n_key)
 
         self.etcd.delete(n_key)
 
-    def discovery(self, service):
+    def discovery(self, service: str) -> Dict[str, Union[str, None]]:
         s_key = self._svc_key(service)
         res = self.etcd.read(s_key, recursive=True)
 
@@ -51,7 +54,7 @@ class EtcdRegistry(object):
 
         return {child.key: child.value for child in res.children}
 
-    def watch(self, service, callback):
+    def watch(self, service: str, callback: Callable) -> None:
         def watch_loop():
             s_key = self._svc_key(service)
             for res in self.etcd.eternal_watch(s_key, recursive=True):
@@ -65,16 +68,16 @@ class EtcdRegistry(object):
 
         self.watch_thread = gevent.spawn(watch_loop)
 
-    def _proc_action(self, action):
+    def _proc_action(self, action: str) -> str:
         return "delete" if action == "expire" else action
 
-    def _svc_key(self, service):
+    def _svc_key(self, service: str) -> str:
         return "/doge/rpc/{}".format(service)
 
-    def _node_key(self, service, node):
+    def _node_key(self, service: str, node: str) -> str:
         return "/doge/rpc/{}/{}".format(service, node)
 
-    def heartbeat(self, key, value, ttl):
+    def heartbeat(self, key: str, value: str, ttl: int) -> None:
         self.etcd.write(key, value, ttl=ttl)
 
         def heartbeat_loop():
@@ -85,7 +88,7 @@ class EtcdRegistry(object):
 
         self.beat_thread = gevent.spawn(heartbeat_loop)
 
-    def destroy(self):
+    def destroy(self) -> None:
         if hasattr(self, "beat_thread"):
             self.beat_thread.kill()
         if hasattr(self, "watch_thread"):
@@ -95,7 +98,7 @@ class EtcdRegistry(object):
 class DirectRegistry(object):
     """Fake Registry"""
 
-    def __init__(self, url):
+    def __init__(self, url: URL) -> None:
         self.url = url
 
     def register(self, service, url):
@@ -104,14 +107,14 @@ class DirectRegistry(object):
     def deregister(self, service, url):
         pass
 
-    def discovery(self, service):
+    def discovery(self, service: str) -> Dict[int, str]:
         address = self.url.get_param("address")
         if address:
             return {i: add for i, add in enumerate(address.split(","))}
         return {0: "%s:%s" % (self.url.host, str(self.url.port))}
 
-    def watch(self, service, callback):
+    def watch(self, service: str, callback: Callable) -> None:
         pass
 
-    def destroy(self):
+    def destroy(self) -> None:
         pass

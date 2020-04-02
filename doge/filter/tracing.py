@@ -4,17 +4,14 @@ import opentracing
 from opentracing.ext import tags
 from opentracing.propagation import Format
 
+from doge.common.doge import Request, Response
 from doge.filter import BaseFilter
-
 
 tracer = opentracing.global_tracer()
 
 
 class TracingClientFilter(BaseFilter):
-    def __init__(self, context, _next):
-        super(TracingClientFilter, self).__init__(context, _next)
-
-    def execute(self, req):
+    def execute(self, req: Request) -> Response:
         with tracer.start_active_span(req.method) as scope:
             scope.span.set_tag(tags.SPAN_KIND, tags.SPAN_KIND_RPC_CLIENT)
             scope.span.set_tag("doge_service", req.service)
@@ -31,10 +28,7 @@ class TracingClientFilter(BaseFilter):
 
 
 class TracingServerFilter(BaseFilter):
-    def __init__(self, context, _next):
-        super(TracingServerFilter, self).__init__(context, _next)
-
-    def execute(self, req):
+    def execute(self, req: Request) -> Response:
         span_ctx = tracer.extract(Format.TEXT_MAP, req.meta)
         span_tags = {tags.SPAN_KIND: tags.SPAN_KIND_RPC_SERVER}
 

@@ -10,15 +10,15 @@ from doge.common.url import URL
 
 
 class Config(object):
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
         self.cfg = self.config_from_file(name)
 
-    def config_from_file(self, name):
+    def config_from_file(self, name: str):
         with open(name, "r", encoding="utf8") as f:
             return yaml.load(f, Loader=yaml.FullLoader)
 
-    def parse_registry(self):
+    def parse_registry(self) -> URL:
         if "registry" not in self.cfg:
             raise RegistryCfgError("registry config not exists")
         rcfg = self.cfg["registry"]
@@ -27,12 +27,10 @@ class Config(object):
         host = rcfg.get("host", None)
         port = rcfg.get("port", None)
         return URL(
-            host and str(host) or host,
-            port and int(port) or port,
-            params=rcfg
+            host and str(host) or host, port and int(port) or port, params=rcfg
         )
 
-    def parse_service(self):
+    def parse_service(self) -> URL:
         if "service" not in self.cfg:
             raise ServiceCfgError("service config not exists")
         scfg = self.cfg["service"]
@@ -42,7 +40,7 @@ class Config(object):
             raise ServiceCfgError("name and node must be provided")
         return URL(str(scfg["host"]), int(scfg["port"]), params=scfg)
 
-    def parse_refer(self):
+    def parse_refer(self) -> URL:
         if "refer" not in self.cfg:
             raise ReferCfgError("refer config not exists")
         rcfg = self.cfg["refer"]

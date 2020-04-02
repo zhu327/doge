@@ -1,14 +1,16 @@
 # coding: utf-8
 
 import time
-
 from importlib import import_module
+from typing import Any, Tuple
 
 from gsocketpool.pool import Pool
 from jaeger_client import Config
+from jaeger_client.tracer import Tracer
+from mprpc.client import RPCPoolClient
 
 
-def import_string(dotted_path):
+def import_string(dotted_path: str,) -> Any:
     try:
         module_path, class_name = dotted_path.rsplit(".", 1)
     except ValueError:
@@ -27,25 +29,25 @@ def import_string(dotted_path):
         raise ImportError(msg)
 
 
-def time_ns():
+def time_ns() -> float:
     s, n = ("%.20f" % time.time()).split(".")
     return int(s) * 1e9 + int(n[:9])
 
 
-def str_to_host(s):
+def str_to_host(s: str) -> Tuple[str, int]:
     h, p = s.split(":")
     return (str(h), int(p))
 
 
 class ConnPool(Pool):
-    def _create_connection(self):
+    def _create_connection(self) -> RPCPoolClient:
         conn = self._factory(**self._options)
         # conn.open()
 
         return conn
 
 
-def init_tracer(service):
+def init_tracer(service: str) -> Tracer:
     config = Config(
         config={"sampler": {"type": "const", "param": 1}, "logging": True},
         service_name=service,
