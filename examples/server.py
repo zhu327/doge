@@ -23,6 +23,6 @@ class Sum(object):
 
 
 if __name__ == "__main__":
-    server = new_server("server.yml")  # 基于配置文件实例化server对象
+    server = new_server("server.yaml")  # 基于配置文件实例化server对象
     server.load(Sum)  # 加载暴露rpc方法类
     server.run()  # 启动服务并注册节点信息到注册中心
