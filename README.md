@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
 #### Metrics
 
-在使用`Prometheus`监控时, 需要在服务节点上配置环境变量`prometheus_multiproc_dir`用户存储`Gunicorn`启动多进程时的`metrics`数据, 然后在服务节点启动`Prometheus Python Exporter`
+在使用`Prometheus`监控时, 需要在服务节点上配置环境变量`prometheus_multiproc_dir`用于存储`Gunicorn`启动多进程时的`metrics`数据, 然后在服务节点启动`Prometheus Python Exporter`
 
 <https://gist.github.com/zhu327/56cdb58a21a750fb5ca5ae7ccd3e0112>
 
@@ -176,6 +176,14 @@ gunicorn app:server -c configs.py
 - [pyyaml](https://github.com/yaml/pyyaml)
 - [prometheus_client](https://github.com/prometheus/client_python)
 - [jaeger-client](https://github.com/monsterxx03/jaeger-client-python)
+
+## History
+
+### 20200403
+
+- add filter featrue
+- type hint
+- flake8 mypy lint
 
 ## License
 
