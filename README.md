@@ -177,14 +177,6 @@ gunicorn app:server -c configs.py
 - [prometheus_client](https://github.com/prometheus/client_python)
 - [jaeger-client](https://github.com/monsterxx03/jaeger-client-python)
 
-## History
-
-### 20200403
-
-- add filter featrue
-- type hint
-- flake8 mypy lint
-
 ## License
 
 Apache License, Version 2.0 
