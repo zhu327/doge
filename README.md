@@ -16,6 +16,7 @@ Doge is a Python RPC framework like [Alibaba Dubbo](http://dubbo.io/) and [Weibo
 - 高可用策略, failover, backupRequestHA
 - 负载均衡策略, RandomLB, RoundrobinLB
 - 限流策略, gevent Pool
+- 功能扩展, Opentracing, Prometheus
 
 ## Quick Start
 
@@ -44,6 +45,9 @@ service:
   host: 127.0.0.1  # 服务暴露ip
   port: 4399  # 服务暴露port
   limitConn: 100  # 服务最大连接数, 可选, 默认不限制
+  filters:  # 服务端扩展中间件
+    - doge.filter.tracing.TracingServerFilter  # opentracing
+    - doge.filter.metrics.MetricsServerFilter  # prometheus
 ```
 
 2. 定义RPC methods类, 启动服务
@@ -86,6 +90,9 @@ registry:  # 注册中心
 refer:
   haStrategy: failover  # 高可用策略, 支持 failover backupRequestHA, 默认failover
   loadBalance: RoundrobinLB  # 负载均衡策略, 支持 RandomLB RoundrobinLB, 默认RoundrobinLB
+  filters:  # 客户端扩展中间件
+    - doge.filter.tracing.TracingClientFilter  # opentracing
+    - doge.filter.metrics.MetricsClientFilter  # prometheus
 ```
 
 2. 创建client并call远程方法
@@ -109,7 +116,19 @@ if __name__ == '__main__':
     print(client.call('sum', 1, 2))  # 远程调用服务Sum类下的sum方法
 ```
 
-## doge json gateway
+### Doge filter
+
+`filter`是Doge提供的自定义中间件扩展机制, 当前提供了`jaeger`链路跟踪与`Prometheus`的metrics, `filter`分为客户端`filter`与服务端`filter`, 具体的实例可以参考`filter`目录下的`tracing.py`
+
+#### Metrics
+
+在使用`Prometheus`监控时, 需要在服务节点上配置环境变量`prometheus_multiproc_dir`用户存储`Gunicorn`启动多进程时的`metrics`数据, 然后在服务节点启动`Prometheus Python Exporter`
+
+<https://gist.github.com/zhu327/56cdb58a21a750fb5ca5ae7ccd3e0112>
+
+如何在多进程下使用`Prometheus`请[参考这里]( https://github.com/prometheus/client_python#multiprocess-mode-gunicorn )
+
+## Doge json gateway
 
 基于Bottle实现的json rpc gateway
 
@@ -131,11 +150,11 @@ class Sum(object):
         return x + y
 
 
-server = new_server('server.json')  # 基于配置文件实例化server对象
+server = new_server('server.yaml')  # 基于配置文件实例化server对象
 server.load(Sum)  # 加载暴露rpc方法类
 ```
 
-创建`configs.py`, 填写的bind必须与`server.json`配置的监听端口一致
+创建`configs.py`, 填写的bind必须与`server.yaml`配置的监听端口一致
 ```python
 from doge.gunicorn.configs import *
 
@@ -154,6 +173,9 @@ gunicorn app:server -c configs.py
 - [mprpc](https://github.com/studio-ousia/mprpc)
 - [python-etcd](https://github.com/jplana/python-etcd)
 - [pyformance](https://github.com/omergertel/pyformance)
+- [pyyaml](https://github.com/yaml/pyyaml)
+- [prometheus_client](https://github.com/prometheus/client_python)
+- [jaeger-client](https://github.com/monsterxx03/jaeger-client-python)
 
 ## License
 
