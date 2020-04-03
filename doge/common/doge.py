@@ -1,7 +1,9 @@
 # coding: utf-8
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Optional
+from typing import Any, Callable, Dict, Optional
+
+from doge.common.url import URL
 
 
 class Response(object):
@@ -26,4 +28,30 @@ class Request(object):
 class Executer(metaclass=ABCMeta):
     @abstractmethod
     def execute(self, req: Request) -> Response:
+        pass
+
+
+class Registry(metaclass=ABCMeta):
+    @abstractmethod
+    def __init__(self, url: URL) -> None:
+        self.url = url
+
+    @abstractmethod
+    def register(self, service, url):
+        pass
+
+    @abstractmethod
+    def deregister(self, service, url):
+        pass
+
+    @abstractmethod
+    def discovery(self, service: str) -> Dict[str, str]:
+        pass
+
+    @abstractmethod
+    def watch(self, service: str, callback: Callable) -> None:
+        pass
+
+    @abstractmethod
+    def destroy(self) -> None:
         pass

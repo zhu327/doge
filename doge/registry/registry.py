@@ -9,11 +9,12 @@ from etcd.client import Client  # type: ignore
 
 from doge.common.url import URL
 from doge.common.utils import str_to_host
+from doge.common.doge import Registry
 
 logger = logging.getLogger("doge.registry.etcd")
 
 
-class EtcdRegistry(object):
+class EtcdRegistry(Registry):
     """Register etcd"""
 
     def __init__(self, url: URL) -> None:
@@ -96,7 +97,7 @@ class EtcdRegistry(object):
             self.watch_thread.kill()
 
 
-class DirectRegistry(object):
+class DirectRegistry(Registry):
     """Fake Registry"""
 
     def __init__(self, url: URL) -> None:
