@@ -18,7 +18,7 @@ logger = logging.getLogger("doge.rpc.server")
 
 class DogeRPCServer(RPCServer, Executer):
     def __init__(self, context: Context, cls: Type) -> None:
-        super(DogeRPCServer, self).__init__()
+        super().__init__()
         self._name = context.url.get_param("name")
         self._filter = context.get_filter(self)
         self._methods = cls()
@@ -45,7 +45,7 @@ class DogeRPCServer(RPCServer, Executer):
             return Response(exception=e)
 
 
-class Server(object):
+class Server:
     def __init__(self, context: Context) -> None:
         self.name = context.url.get_param("name")
         self.url = context.url
@@ -55,15 +55,15 @@ class Server(object):
         self.limit = context.url.get_param("limitConn", "default")
 
     def load(self, cls: Type) -> None:
-        u"""加载RPC methods类"""
+        """加载RPC methods类"""
         self.handler = DogeRPCServer(self.context, cls)
 
     def register(self) -> None:
-        u"""向registry服务"""
+        """向registry服务"""
         self.registry.register(self.name, self.url)
 
     def handle_signal(self) -> None:
-        u"""注册信号"""
+        """注册信号"""
 
         def handler(signum, frame):
             self.registry.deregister(self.name, self.url)
@@ -72,13 +72,11 @@ class Server(object):
         signal.signal(signal.SIGTERM, handler)
 
     def run(self):
-        u"""启动RPC服务"""
+        """启动RPC服务"""
         if not self.handler:
             raise ServerLoadError("Methods not exits.")
 
-        logger.info(
-            "Starting server at %s:%s" % (self.url.host, str(self.url.port))
-        )
+        logger.info(f"Starting server at {self.url.host}:{str(self.url.port)}")
 
         self.handle_signal()
 
@@ -96,7 +94,7 @@ class Server(object):
 
 
 def new_server(config_file: str) -> Server:
-    u"""从配置文件生成server"""
+    """从配置文件生成server"""
     config = Config(config_file)
     context = Context(config.parse_service(), config.parse_registry())
     return Server(context)

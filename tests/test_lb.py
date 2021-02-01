@@ -9,7 +9,7 @@ from doge.cluster.lb import RandomLB, RoundrobinLB, MaxSelectArraySize
 
 @pytest.fixture(scope="module")
 def eps():
-    class C(object):
+    class C:
         pass
 
     eps = []
@@ -20,7 +20,7 @@ def eps():
     return eps
 
 
-class TestRandomLB(object):
+class TestRandomLB:
     lb_class = RandomLB
 
     def test_select(self, eps):

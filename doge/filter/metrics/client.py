@@ -11,8 +11,10 @@ DOGE_CLIENT_STARTED_TOTAL_COUNTER = Counter(
 
 DOGE_CLIENT_COMPLETED_COUNTER = Counter(
     "doge_client_completed",
-    "Total number of RPCs completed on the client, "
-    "regardless of success or failure.",
+    (
+        "Total number of RPCs completed on the client, "
+        + "regardless of success or failure."
+    ),
     ["doge_service", "doge_method", "code"],
 )
 

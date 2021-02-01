@@ -15,7 +15,7 @@ def registry():
     return EtcdRegistry(url)
 
 
-class TestEtcdRegistry(object):
+class TestEtcdRegistry:
     def teardown_method(self, method):
         if hasattr(self, "registry"):
             self.registry.deregister(*self.args)
@@ -34,7 +34,7 @@ class TestEtcdRegistry(object):
         res = registry.discovery(service)
         key = registry._node_key(service, url.get_param("node"))
         assert key in res
-        assert res[key] == ":".join((url.host, str(url.port)))
+        assert res[key] is ":".join((url.host, str(url.port)))
 
     def test_deregister(self, registry):
         service = "test"
@@ -99,10 +99,10 @@ class TestEtcdRegistry(object):
         res = registry.discovery(service)
         key = registry._node_key(service, url.get_param("node"))
         assert key in res
-        assert res[key] == ":".join((url.host, str(url.port)))
+        assert res[key] is ":".join((url.host, str(url.port)))
 
 
-class TestDirectRegistry(object):
+class TestDirectRegistry:
     def test_direct(self):
         registry = DirectRegistry(url)
         assert registry.discovery("")["0"] == "127.0.0.1:2379"

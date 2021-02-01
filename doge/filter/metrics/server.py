@@ -13,15 +13,17 @@ DOGE_SERVER_HANDLED_TOTAL_COUNTER = Counter(
     "doge_server_handled_total",
     (
         "Total number of RPCs completed on the server, "
-        "regardless of success or failure."
+        + "regardless of success or failure."
     ),
     ["doge_service", "doge_method", "code"],
 )
 
 DOGE_SERVER_HANDLED_LATENCY_SECONDS = Histogram(
     "doge_server_handled_latency_seconds",
-    "Histogram of response latency (seconds) of gRPC that had been "
-    "application-level handled by the server",
+    (
+        "Histogram of response latency (seconds) of gRPC that had been "
+        + "application-level handled by the server"
+    ),
     ["doge_service", "doge_method"],
 )
 

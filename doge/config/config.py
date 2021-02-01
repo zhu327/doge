@@ -12,7 +12,7 @@ from doge.common.exceptions import (
 from doge.common.url import URL
 
 
-class Config(object):
+class Config:
     def __init__(self, name: str) -> None:
         self.name = name
         self.cfg = self.config_from_file(name)
@@ -29,9 +29,7 @@ class Config(object):
             raise RegistryCfgError("host or address must be provided")
         host = rcfg.get("host", None)
         port = rcfg.get("port", None)
-        return URL(
-            host and str(host) or host, port and int(port) or port, params=rcfg
-        )
+        return URL(host and str(host) or host, port and int(port) or port, params=rcfg)
 
     def parse_service(self) -> URL:
         if "service" not in self.cfg:

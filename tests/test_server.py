@@ -23,12 +23,12 @@ def server():
     s.registry.destroy()
 
 
-class TestServer(object):
+class TestServer:
     def teardown_method(self, method):
         self.g.kill()
 
     def test_server(self, server):
-        class Sum(object):
+        class Sum:
             def sum(self, x, y):
                 return x + y
 

@@ -28,7 +28,7 @@ setup(
     author="Timmy",
     author_email="zhu327@gmail.com",
     url="http://github.com/zhu327/doge",
-    packages=["doge"] + ["%s.%s" % ("doge", i) for i in find_packages("doge")],
+    packages=["doge"] + [f"{'doge'}.{i}" for i in find_packages("doge")],
     license="Apache License 2.0",
     keywords=["rpc", "etcd", "messagepack", "gevent", "microservices"],
     classifiers=[

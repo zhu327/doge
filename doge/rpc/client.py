@@ -69,14 +69,12 @@ class Client(Executer):
             self.closed = True
 
 
-class Cluster(object):
+class Cluster:
     def __init__(self, config_file: str) -> None:
         u"""Cluster 抽象"""
         self.config_file = config_file
         self.config = Config(config_file)
-        self.context = Context(
-            self.config.parse_refer(), self.config.parse_registry()
-        )
+        self.context = Context(self.config.parse_refer(), self.config.parse_registry())
 
         self.clients: Dict[str, Client] = {}
         self.sem = BoundedSemaphore(1)

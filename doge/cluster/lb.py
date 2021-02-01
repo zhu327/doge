@@ -11,7 +11,7 @@ MaxSelectArraySize = 3
 defaultWeight = 1
 
 
-class RandomLB(object):
+class RandomLB:
     u"""随机 Load Balance"""
 
     def __init__(
@@ -32,7 +32,7 @@ class RandomLB(object):
         return select_list_from_index(self.endpoints, index)
 
 
-class RoundrobinLB(object):
+class RoundrobinLB:
     u"""Roundrobin Load Balance"""
 
     def __init__(

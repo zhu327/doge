@@ -16,7 +16,7 @@ class BaseFilter(Executer):
         return self.next.execute(req)
 
 
-class FilterChain(object):
+class FilterChain:
     def __init__(self, context: Any):
         self.context = context
 

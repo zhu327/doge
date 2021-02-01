@@ -15,7 +15,7 @@ rurl = URL("127.0.0.1", 2379, params={"ttl": 10})
 context = Context(url, rurl)
 
 
-class Sum(object):
+class Sum:
     def sum(self, x, y):
         return x + y
 
@@ -31,7 +31,7 @@ def server():
     s.registry.destroy()
 
 
-class TestClient(object):
+class TestClient:
     def teardown_method(self, method):
         self.c.destroy()
         del self.c

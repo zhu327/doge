@@ -35,14 +35,14 @@ class EtcdRegistry(Registry):
         value = "{}:{}".format(url.host, url.port)
         ttl = self.url.get_param("ttl", 10)
 
-        logger.info("register key: %s value: %s" % (n_key, value))
+        logger.info(f"register key: {n_key} value: {value}")
 
         self.heartbeat(n_key, value, ttl=ttl)
 
     def deregister(self, service: str, url: URL) -> None:
         n_key = self._node_key(service, url.get_param("node"))
 
-        logger.debug("deregister key: %s" % n_key)
+        logger.debug(f"deregister key: {n_key}")
 
         self.etcd.delete(n_key)
 
@@ -50,9 +50,7 @@ class EtcdRegistry(Registry):
         s_key = self._svc_key(service)
         res = self.etcd.read(s_key, recursive=True)
 
-        logger.info(
-            "discovery key: %s length: %s" % (s_key, len(res._children))
-        )
+        logger.info(f"discovery key: {s_key} length: {len(res._children)}")
 
         return {child.key: child.value for child in res.children}
 
@@ -113,7 +111,7 @@ class DirectRegistry(Registry):
         address = self.url.get_param("address")
         if address:
             return {str(i): add for i, add in enumerate(address.split(","))}
-        return {"0": "%s:%s" % (self.url.host, str(self.url.port))}
+        return {"0": f"{self.url.host}:{str(self.url.port)}"}
 
     def watch(self, service: str, callback: Callable) -> None:
         pass

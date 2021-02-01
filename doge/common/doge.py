@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Optional
 from doge.common.url import URL
 
 
-class Response(object):
+class Response:
     def __init__(
         self, value: Any = None, exception: Optional[Exception] = None,
     ) -> None:
@@ -15,10 +15,8 @@ class Response(object):
         self.prosess_time = 0
 
 
-class Request(object):
-    def __init__(
-        self, service: Optional[str], method: str, *args, meta=None
-    ) -> None:
+class Request:
+    def __init__(self, service: Optional[str], method: str, *args, meta=None) -> None:
         self.service = service
         self.method = method
         self.args = args

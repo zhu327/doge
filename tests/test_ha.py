@@ -14,7 +14,7 @@ from doge.rpc.server import DogeRPCServer
 from doge.common.context import Context
 
 
-class SumServer(object):
+class SumServer:
     def sum(self, x, y):
         return x + y
 
@@ -31,9 +31,7 @@ def server():
     server = StreamServer(
         ("127.0.0.1", 4399),
         DogeRPCServer(
-            Context(
-                URL(None, None, None, {"name": ""}), URL(None, None, None, {})
-            ),
+            Context(URL(None, None, None, {"name": ""}), URL(None, None, None, {})),
             SumServer,
         ),
     )
@@ -43,14 +41,14 @@ def server():
     g.kill()
 
 
-class TestFailOverHA(object):
+class TestFailOverHA:
     def test_fail_over(self, server, lb):
         ha = FailOverHA(lb.url)
         r = Request("", "sum", 1, 2)
         assert ha.call(r, lb).value == 3
 
 
-class TestBackupRequestHA(object):
+class TestBackupRequestHA:
     def test_br(self, server, lb):
         ha = BackupRequestHA(lb.url)
         r = Request("", "sum", 1, 2)

@@ -12,7 +12,7 @@ from doge.filter import FilterChain
 from doge.registry.registry import DirectRegistry, EtcdRegistry
 
 
-class Context(object):
+class Context:
     def __init__(self, url: URL, registry_url: URL) -> None:
         self.url = url
         self.registry_url = registry_url

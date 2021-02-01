@@ -17,7 +17,7 @@ init_tracer("server")
 
 
 # 定义rpc方法类
-class Sum(object):
+class Sum:
     def sum(self, x, y):
         return x + y
 

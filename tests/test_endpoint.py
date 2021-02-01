@@ -12,7 +12,7 @@ from doge.rpc.server import DogeRPCServer
 from doge.common.context import Context
 
 
-class SumServer(object):
+class SumServer:
     def sum(self, x, y):
         return x + y
 
@@ -22,9 +22,7 @@ def server():
     server = StreamServer(
         ("127.0.0.1", 4399),
         DogeRPCServer(
-            Context(
-                URL(None, None, None, {"name": ""}), URL(None, None, None, {})
-            ),
+            Context(URL(None, None, None, {"name": ""}), URL(None, None, None, {})),
             SumServer,
         ),
     )
@@ -39,7 +37,7 @@ def url():
     return URL("127.0.0.1", 4399, "")
 
 
-class TestEndpoint(object):
+class TestEndpoint:
     def teardown_method(self, method):
         if hasattr(self, "ep"):
             self.ep.destroy()

@@ -8,16 +8,15 @@ from doge.rpc.client import Cluster
 from doge.rpc.server import new_server
 
 
-class Sum(object):
+class Sum:
     def sum(self, x, y):
         return x + y
 
 
-class TestConfig(object):
+class TestConfig:
     def teardown_method(self, method):
         self.g.kill()
-        self.server.registry.deregister(
-            self.server.name, self.server.context.url)
+        self.server.registry.deregister(self.server.name, self.server.context.url)
         self.server.registry.destroy()
         self.client.destroy()
 
