@@ -4,11 +4,7 @@ from io import open
 
 import yaml
 
-from doge.common.exceptions import (
-    ReferCfgError,
-    RegistryCfgError,
-    ServiceCfgError,
-)
+from doge.common.exceptions import ReferCfgError, RegistryCfgError, ServiceCfgError
 from doge.common.url import URL
 
 

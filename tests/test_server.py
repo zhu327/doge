@@ -1,14 +1,13 @@
 # coding: utf-8
 
-import pytest
 import gevent
+import pytest
 from gevent import sleep
-
 from mprpc import RPCClient
 
-from doge.rpc.server import Server
 from doge.common.context import Context
 from doge.common.url import URL
+from doge.rpc.server import Server
 
 url = URL("127.0.0.1", 4399, params={"name": "test", "node": "n1"})
 rurl = URL("127.0.0.1", 2379, params={"ttl": 10})

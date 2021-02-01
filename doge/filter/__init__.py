@@ -2,8 +2,8 @@ from typing import Any
 
 from gevent.monkey import patch_thread  # type: ignore
 
-from doge.common.utils import import_string
 from doge.common.doge import Executer, Request, Response
+from doge.common.utils import import_string
 
 patch_thread()
 

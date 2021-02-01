@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from __future__ import print_function
+
 import pytest
 from gevent import sleep
 
-from doge.registry.registry import EtcdRegistry, DirectRegistry
 from doge.common.url import URL
+from doge.registry.registry import DirectRegistry, EtcdRegistry
 
 url = URL("127.0.0.1", 2379, params={"ttl": 10})
 

@@ -4,7 +4,7 @@ import random
 
 import pytest
 
-from doge.cluster.lb import RandomLB, RoundrobinLB, MaxSelectArraySize
+from doge.cluster.lb import MaxSelectArraySize, RandomLB, RoundrobinLB
 
 
 @pytest.fixture(scope="module")

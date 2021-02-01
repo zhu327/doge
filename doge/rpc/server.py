@@ -8,10 +8,10 @@ from gevent.server import StreamServer  # type: ignore
 from mprpc import RPCServer  # type: ignore
 from mprpc.exceptions import MethodNotFoundError  # type: ignore
 
+from doge.common.context import Context
 from doge.common.doge import Executer, Request, Response
 from doge.common.exceptions import ServerLoadError
 from doge.config.config import Config
-from doge.common.context import Context
 
 logger = logging.getLogger("doge.rpc.server")
 

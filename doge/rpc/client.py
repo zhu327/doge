@@ -5,11 +5,11 @@ from typing import Any, Dict
 
 from gevent.lock import BoundedSemaphore  # type: ignore
 
+from doge.cluster.endpoint import new_endpoint
+from doge.common.context import Context
 from doge.common.doge import Executer, Request, Response
 from doge.common.exceptions import ClientError
 from doge.config.config import Config
-from doge.common.context import Context
-from doge.cluster.endpoint import new_endpoint
 
 logger = logging.getLogger("doge.rpc.client")
 

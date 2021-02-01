@@ -7,9 +7,9 @@ import etcd  # type: ignore
 import gevent  # type: ignore
 from etcd.client import Client  # type: ignore
 
+from doge.common.doge import Registry
 from doge.common.url import URL
 from doge.common.utils import str_to_host
-from doge.common.doge import Registry
 
 logger = logging.getLogger("doge.registry.etcd")
 

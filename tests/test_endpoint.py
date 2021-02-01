@@ -2,14 +2,13 @@
 
 import gevent
 import pytest
-
 from gevent.server import StreamServer
 
 from doge.cluster.endpoint import EndPoint
-from doge.common.url import URL
-from doge.common.doge import Request
-from doge.rpc.server import DogeRPCServer
 from doge.common.context import Context
+from doge.common.doge import Request
+from doge.common.url import URL
+from doge.rpc.server import DogeRPCServer
 
 
 class SumServer:

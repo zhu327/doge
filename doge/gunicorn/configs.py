@@ -1,7 +1,6 @@
 # coding: utf-8
 from prometheus_client import multiprocess  # type: ignore
 
-
 reuse_port = True
 worker_class = "doge.gunicorn.worker.DogeWorker"
 

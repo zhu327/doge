@@ -1,17 +1,16 @@
 # coding: utf-8
 
-import pytest
 import gevent
-
+import pytest
 from gevent.server import StreamServer
 
-from doge.cluster.ha import FailOverHA, BackupRequestHA
-from doge.cluster.lb import RandomLB
 from doge.cluster.endpoint import EndPoint
-from doge.common.url import URL
-from doge.common.doge import Request
-from doge.rpc.server import DogeRPCServer
+from doge.cluster.ha import BackupRequestHA, FailOverHA
+from doge.cluster.lb import RandomLB
 from doge.common.context import Context
+from doge.common.doge import Request
+from doge.common.url import URL
+from doge.rpc.server import DogeRPCServer
 
 
 class SumServer:
