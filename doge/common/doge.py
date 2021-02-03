@@ -16,7 +16,9 @@ class Response:
 
 
 class Request:
-    def __init__(self, service: Optional[str], method: str, *args, meta=None) -> None:
+    def __init__(
+        self, service: Optional[str], method: str, *args, meta=None
+    ) -> None:
         self.service = service
         self.method = method
         self.args = args

@@ -40,7 +40,9 @@ class URL:
         value = self.get_int(mkey)
         return value or default
 
-    def get_method_positive_int_value(self, method: str, key: str, default: int) -> int:
+    def get_method_positive_int_value(
+        self, method: str, key: str, default: int
+    ) -> int:
         value = self.get_method_int_value(method, key, default)
         return value if value > 0 else default
 

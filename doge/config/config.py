@@ -4,7 +4,11 @@ from io import open
 
 import yaml
 
-from doge.common.exceptions import ReferCfgError, RegistryCfgError, ServiceCfgError
+from doge.common.exceptions import (
+    ReferCfgError,
+    RegistryCfgError,
+    ServiceCfgError,
+)
 from doge.common.url import URL
 
 
@@ -25,7 +29,9 @@ class Config:
             raise RegistryCfgError("host or address must be provided")
         host = rcfg.get("host", None)
         port = rcfg.get("port", None)
-        return URL(host and str(host) or host, port and int(port) or port, params=rcfg)
+        return URL(
+            host and str(host) or host, port and int(port) or port, params=rcfg
+        )
 
     def parse_service(self) -> URL:
         if "service" not in self.cfg:

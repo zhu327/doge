@@ -35,7 +35,7 @@ class TestEtcdRegistry:
         res = registry.discovery(service)
         key = registry._node_key(service, url.get_param("node"))
         assert key in res
-        assert res[key] is ":".join((url.host, str(url.port)))
+        assert res[key] == ":".join((url.host, str(url.port)))
 
     def test_deregister(self, registry):
         service = "test"
@@ -100,7 +100,7 @@ class TestEtcdRegistry:
         res = registry.discovery(service)
         key = registry._node_key(service, url.get_param("node"))
         assert key in res
-        assert res[key] is ":".join((url.host, str(url.port)))
+        assert res[key] == ":".join((url.host, str(url.port)))
 
 
 class TestDirectRegistry:

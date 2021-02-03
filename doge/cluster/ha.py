@@ -29,7 +29,9 @@ class FailOverHA:
         self.url = url
         self.name = "failover"
 
-    def call(self, request: Request, lb: Union[RandomLB, RoundrobinLB]) -> Response:
+    def call(
+        self, request: Request, lb: Union[RandomLB, RoundrobinLB]
+    ) -> Response:
         retries = self.url.get_method_positive_int_value(
             request.method, "retries", defaultRetries
         )
@@ -60,7 +62,9 @@ class BackupRequestHA:
         self.registry = MetricsRegistry()
         self.lastResetTime = time_ns()
 
-    def call(self, request: Request, lb: Union[RandomLB, RoundrobinLB]) -> Response:
+    def call(
+        self, request: Request, lb: Union[RandomLB, RoundrobinLB]
+    ) -> Response:
         ep_list = lb.select_list(request)
         if not ep_list:
             return Response(exception=RemoteError("no available endpoint"))
@@ -69,7 +73,9 @@ class BackupRequestHA:
             return self.do_call(request, ep_list[0])
 
         backupRequestDelayRatio = self.url.get_method_positive_int_value(
-            request.method, "backupRequestDelayRatio", defaultBackupRequestDelayRatio,
+            request.method,
+            "backupRequestDelayRatio",
+            defaultBackupRequestDelayRatio,
         )
         backupRequestMaxRetryRatio = self.url.get_method_positive_int_value(
             request.method,
@@ -82,13 +88,16 @@ class BackupRequestHA:
 
         histogram = self.registry.histogram(request.method)
         delay = int(
-            histogram.get_snapshot().get_percentile(backupRequestDelayRatio / 100.0)
+            histogram.get_snapshot().get_percentile(
+                backupRequestDelayRatio / 100.0
+            )
         )
         if delay < 10:
             delay = 10
 
         logger.debug(
-            f"service: {request.service} method: {request.method} ha delay: {str(delay)}"
+            f"service: {request.service} method: {request.method}"
+            + f" ha delay: {str(delay)}"
         )
 
         with gevent.Timeout(requestTimeout / 1000.0, False):
@@ -97,7 +106,9 @@ class BackupRequestHA:
                 ep = ep_list[i]
                 if i == 0:
                     self.update_call_record(counterRoundCount)
-                if i > 0 and not self.try_acquirePermit(backupRequestMaxRetryRatio):
+                if i > 0 and not self.try_acquirePermit(
+                    backupRequestMaxRetryRatio
+                ):
                     break
 
                 def func():

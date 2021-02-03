@@ -22,7 +22,10 @@ def import_string(dotted_path: str,) -> Any:
     try:
         return getattr(module, class_name)
     except AttributeError:
-        msg = f'Module "{dotted_path}" does not define a "{class_name}" attribute/class'
+        msg = (
+            f'Module "{dotted_path}" does not define'
+            + f' a "{class_name}" attribute/class'
+        )
         raise ImportError(msg)
 
 

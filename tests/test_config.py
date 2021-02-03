@@ -16,7 +16,9 @@ class Sum:
 class TestConfig:
     def teardown_method(self, method):
         self.g.kill()
-        self.server.registry.deregister(self.server.name, self.server.context.url)
+        self.server.registry.deregister(
+            self.server.name, self.server.context.url
+        )
         self.server.registry.destroy()
         self.client.destroy()
 

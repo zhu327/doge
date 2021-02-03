@@ -55,7 +55,9 @@ class EndPoint:
             return Response(exception=RemoteError(str(e)))
         except (IOError, socket.timeout):
             self.record_error()
-            return Response(exception=RemoteError("socket error or bad method"))
+            return Response(
+                exception=RemoteError("socket error or bad method")
+            )
         self.reset_error()
         return Response(value=res)
 

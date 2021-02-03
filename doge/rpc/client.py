@@ -74,7 +74,9 @@ class Cluster:
         u"""Cluster 抽象"""
         self.config_file = config_file
         self.config = Config(config_file)
-        self.context = Context(self.config.parse_refer(), self.config.parse_registry())
+        self.context = Context(
+            self.config.parse_refer(), self.config.parse_registry()
+        )
 
         self.clients: Dict[str, Client] = {}
         self.sem = BoundedSemaphore(1)
