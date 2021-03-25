@@ -2,5 +2,5 @@ mprpc==0.1.17
 prometheus-client==0.7.1
 pyformance==0.4
 python-etcd==0.4.5
-pyyaml==5.3.1
+pyyaml==5.4
 git+https://github.com/monsterxx03/jaeger-client-python.git@gevent
