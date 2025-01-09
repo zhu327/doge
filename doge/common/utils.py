@@ -10,7 +10,9 @@ from jaeger_client.tracer import Tracer  # type: ignore
 from mprpc.client import RPCPoolClient  # type: ignore
 
 
-def import_string(dotted_path: str,) -> Any:
+def import_string(
+    dotted_path: str,
+) -> Any:
     try:
         module_path, class_name = dotted_path.rsplit(".", 1)
     except ValueError:

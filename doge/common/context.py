@@ -2,6 +2,8 @@
 
 from typing import Dict, List, Union
 
+from gevent.local import local  # type: ignore
+
 from doge.cluster.endpoint import EndPoint, new_endpoint
 from doge.cluster.ha import BackupRequestHA, FailOverHA
 from doge.cluster.lb import RandomLB, RoundrobinLB
@@ -10,6 +12,8 @@ from doge.common.exceptions import ReferCfgError, RegistryCfgError
 from doge.common.url import URL
 from doge.filter import FilterChain
 from doge.registry.registry import DirectRegistry, EtcdRegistry
+
+rpc_local = local()
 
 
 class Context:

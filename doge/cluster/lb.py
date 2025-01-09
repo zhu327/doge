@@ -12,7 +12,7 @@ defaultWeight = 1
 
 
 class RandomLB:
-    u"""随机 Load Balance"""
+    """随机 Load Balance"""
 
     def __init__(
         self, url: URL, endpoints: List[EndPoint], weight: None = None
@@ -33,7 +33,7 @@ class RandomLB:
 
 
 class RoundrobinLB:
-    u"""Roundrobin Load Balance"""
+    """Roundrobin Load Balance"""
 
     def __init__(
         self, url: URL, endpoints: List[EndPoint], weight: None = None
@@ -53,7 +53,9 @@ class RoundrobinLB:
             return ep
         return select_list_from_index(self.endpoints, index)
 
-    def roundrobin_select(self,) -> Tuple[int, Optional[EndPoint]]:
+    def roundrobin_select(
+        self,
+    ) -> Tuple[int, Optional[EndPoint]]:
         eps = self.endpoints
         if not eps:
             return -1, None

@@ -6,7 +6,7 @@ from typing import Any, Dict
 from gevent.lock import BoundedSemaphore  # type: ignore
 
 from doge.cluster.endpoint import new_endpoint
-from doge.common.context import Context
+from doge.common.context import Context, rpc_local
 from doge.common.doge import Executer, Request, Response
 from doge.common.exceptions import ClientError
 from doge.config.config import Config
@@ -31,7 +31,9 @@ class Client(Executer):
 
     def call(self, method: str, *args) -> Any:
         if self.available:
-            r = Request(self.service, method, *args)
+            r = Request(
+                self.service, method, *args, meta=getattr(rpc_local, "meta", None)
+            )
             res = self.filter.execute(r)
             if res.exception:
                 logger.error(str(res.exception))
@@ -71,12 +73,10 @@ class Client(Executer):
 
 class Cluster:
     def __init__(self, config_file: str) -> None:
-        u"""Cluster 抽象"""
+        """Cluster 抽象"""
         self.config_file = config_file
         self.config = Config(config_file)
-        self.context = Context(
-            self.config.parse_refer(), self.config.parse_registry()
-        )
+        self.context = Context(self.config.parse_refer(), self.config.parse_registry())
 
         self.clients: Dict[str, Client] = {}
         self.sem = BoundedSemaphore(1)

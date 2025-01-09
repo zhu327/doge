@@ -8,7 +8,9 @@ from doge.common.url import URL
 
 class Response:
     def __init__(
-        self, value: Any = None, exception: Optional[Exception] = None,
+        self,
+        value: Any = None,
+        exception: Optional[Exception] = None,
     ) -> None:
         self.value = value
         self.exception = exception
@@ -16,9 +18,7 @@ class Response:
 
 
 class Request:
-    def __init__(
-        self, service: Optional[str], method: str, *args, meta=None
-    ) -> None:
+    def __init__(self, service: Optional[str], method: str, *args, meta=None) -> None:
         self.service = service
         self.method = method
         self.args = args

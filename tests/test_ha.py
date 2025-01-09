@@ -30,9 +30,7 @@ def server():
     server = StreamServer(
         ("127.0.0.1", 4399),
         DogeRPCServer(
-            Context(
-                URL(None, None, None, {"name": ""}), URL(None, None, None, {})
-            ),
+            Context(URL(None, None, None, {"name": ""}), URL(None, None, None, {})),
             SumServer,
         ),
     )

@@ -8,7 +8,7 @@ from gevent.server import StreamServer  # type: ignore
 from mprpc import RPCServer  # type: ignore
 from mprpc.exceptions import MethodNotFoundError  # type: ignore
 
-from doge.common.context import Context
+from doge.common.context import Context, rpc_local
 from doge.common.doge import Executer, Request, Response
 from doge.common.exceptions import ServerLoadError
 from doge.config.config import Config
@@ -28,6 +28,8 @@ class DogeRPCServer(RPCServer, Executer):
             raise MethodNotFoundError("Method not found: %s", method_name)
 
         def function(*args):
+            rpc_local.meta = args[0]
+
             req = Request(self._name, method_name, *args[1:], meta=args[0])
             res = self._filter.execute(req)
             if res.exception:
